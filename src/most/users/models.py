@@ -6,59 +6,92 @@ from datetime import date, datetime
 import string
 from django.core.exceptions import ValidationError
 from utils import make_new_uid
+from django.contrib.auth.models import (
+    BaseUserManager, AbstractBaseUser
+)
 
 
-# class TaskGroup(models.Model):
-#     hospital = models.ForeignKey("Hospital", verbose_name=_("Hospital"))
-#     title = models.CharField(_("Title"), max_length=100, unique=True)
-#     department = models.CharField(_("Department"), max_length=200, help_text=_("Referred department (e.g. \"Patologia Cardiaca\")"))
-#     task_group_type = models.CharField(_("Task group type"), max_length=50, null=True, blank=True, help_text=_("The S.S.D. (e.g. \"Patologia Cardiaca\")"))
-#     secretariat_phone = models.CharField(_("Secretariat phone"), max_length=50, null=True, blank=True)
-#     secretariat_fax = models.CharField(_("Secretariat fax"), max_length=50, null=True, blank=True)
-#     director = models.CharField(_("Director"), max_length=150)
-#     head_office_phone = models.CharField(_("Head office phone"), max_length=50, null=True, blank=True)
-#     head_office_email = models.EmailField(_("Head office email"), null=True, blank=True)
-#     tc_service = models.BooleanField(_("Offers teleconsultation service?"),
-#         help_text=_("select if the task group offers an teleconsultation service"), default=False)
-#     is_active = models.BooleanField(_("Is active?"), default=True)
-#     devices = models.ManyToManyField(Device, verbose_name=_("Devices"), related_name="taskgroups", null=True, blank=True)
-#     description = models.TextField(_("Description"))
-#
-#     def __unicode__(self):
-#         return u"[%s]" % self.title # TaskGroup: %s" % (self.title, self.description)
-#
-#     def get_absolute_url(self):
-#         return "/task_group/%i/get/" % self.id
-#
-#     def get_fields():
-#         mandatory = ["title", ]
-#         optional = []
-#         return (mandatory, optional)
-#
-#     def clean(self):
-#         if self.duty_calendar:
-#             if self.duty_calendar.kind != 2: # Il tipo deve essere per forza un Duty
-#                 raise ValidationError(_("Duty Calendar admits only \"duty calendar\" type!"))
-#
-#     class Meta:
-#         #db_table = "task_group"
-#         verbose_name = _("Task Group")
-#         verbose_name_plural = _("Task Groups")
-#
-#     def save(self, *args, **kwargs):
-#         super(TaskGroup, self).save(*args, **kwargs)
-#         if not self.pk:
-#             self.duty_calendar = Calendar.objects.create(title=_("Duty calendar %s" % self.__unicode__()),
-#                         desc=_("(DUTY) calendar internal of task group %s" % self.__unicode__()),
-#                         kind=2,
-#                         color=3,
-#                         owner_task_group=self,
-#                         is_active=True
-#             )
-#             self.save()
+class TaskGroup(models.Model):
+    """Class TaskGroup
+
+    Attributes:
+        title                   (django.db.models.CharField)    : task group title
+        description             (django.db.models.CharField)    : task group description
+        task_group_type         (django.db.models.CharField)    : task group type
+        hospital                (django.db.models.CharField)    : task group's hospital
+        is_health_care_provider (django.db.models.BooleanField) : task group able to play specialized role
+    """
+    TASK_GROUP_TYPES = (
+        ('SP', 'Service Provider'),
+        ('HF', 'Health Care Facilities'),
+    )
+
+    title = models.CharField(_('Title'), max_length=100, unique=True)
+    description = models.CharField(_('Description'), max_length=100, help_text=_('e.g. "Pediatric Cardiology"'))
+    task_group_type = models.CharField(_('Task group type'), choices=TASK_GROUP_TYPES, max_length=2)
+    hospital = models.CharField(_('Hospital'), max_length=100, default=None, null=True, blank=True)  # TODO (OPTIONAL) :: create Hospital class
+    users = models.ManyToManyField('MostUser', related_name='task_group_related', null=True, blank=True,
+                                   verbose_name=_('MOST Users'))
+    is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
+    is_active = models.BooleanField(_('Is active?'), default=True)
+
+    # hospital = models.ForeignKey("Hospital", verbose_name=_("Hospital"))
+    # task_group_type = models.CharField(_("Task group type"), max_length=50, null=True, blank=True,
+    #                                    help_text=_("The S.S.D. (e.g. \"Patologia Cardiaca\")"))
+    # secretariat_phone = models.CharField(_("Secretariat phone"), max_length=50, null=True, blank=True)
+    # secretariat_fax = models.CharField(_("Secretariat fax"), max_length=50, null=True, blank=True)
+    # director = models.CharField(_("Director"), max_length=150)
+    # head_office_phone = models.CharField(_("Head office phone"), max_length=50, null=True, blank=True)
+    # head_office_email = models.EmailField(_("Head office email"), null=True, blank=True)
+    # tc_service = models.BooleanField(_("Offers teleconsultation service?"),
+    #     help_text=_("select if the task group offers an teleconsultation service"), default=False)
+    # devices = models.ManyToManyField(Device, verbose_name=_("Devices"), related_name="taskgroups", null=True, blank=True)
+
+    def clinicians_count(self):
+        return self.users.filter(clinician_related__isnull=False).count()
+
+    def clean(self):
+        # If is_health_care_provider == True and task_group_type != 'HF', raise exception
+        if not self.task_group_type == 'HF' and self.is_health_care_provider:
+            raise ValidationError(_('Only health care facilities can provide health care service.'))
+
+    def __unicode__(self):
+        return u'%s' % self.title
+
+    class Meta:
+        db_table = 'most_task_group'
+        verbose_name = _('Task Group')
+        verbose_name_plural = _('Task Groups')
 
 
-class UserProfile(models.Model):
+class MostUserManager(BaseUserManager):
+    def create_user(self, username, first_name, last_name, email, password=None):
+        if not (username and first_name and last_name and email):
+            raise ValueError('Users must have a username, a first_name, a last_name and an email')
+        user = self.model(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            email=self.normalize_email(email)
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, first_name, last_name, email, password):
+        user = self.create_user(
+            username,
+            first_name,
+            last_name,
+            email,
+            password
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
+class MostUser(AbstractBaseUser):
     """Class UserProfile
 
     Attributes:
@@ -73,7 +106,7 @@ class UserProfile(models.Model):
         creation_timestamp      (django.db.models.DateTimeField)    : user creation timestamp
         last_modified_timestamp (django.db.models.DateTimeField)    : user last modification timestamp
         deactivation_timestamp  (django.db.models.DateTimeField)    : user deactivation timestamp
-        is_health_care_provider  (django.db.models.DateTimeField)    : clinician enabled to play specialized role
+        is_health_care_provider  (django.db.models.BooleanField)    : clinician able to play specialized role
     """
     USER_TYPES = (
         ('AD', _('Administrative')),
@@ -87,11 +120,20 @@ class UserProfile(models.Model):
         ('U', _('Unknown')),
     )
 
+    username = models.CharField(_('Username'), max_length=30, unique=True)
+    first_name = models.CharField(_('User first name'), max_length=50)
+    last_name = models.CharField(_('User last name'), max_length=50)
+    email = models.EmailField(_('User email address'), max_length=255)
+    birth_date = models.DateField(_('User birth date'), null=True, blank=True)
+    is_staff = models.BooleanField(_('Is the user staff?'), default=True)
+    is_active = models.BooleanField(_('Is the user active?'), default=True)
+    # is_superuser = models.BooleanField(_('Is the user superuser?'), default=False)
+    is_admin = models.BooleanField(_('Is the user superuser?'), default=False)
+    # user = models.ForeignKey(User)
     uid = models.CharField(max_length=40, default=make_new_uid, unique=True)
-    user = models.ForeignKey(User)
     numeric_password = models.CharField(max_length=4, null=True, blank=True, verbose_name=_('Numeric password'),
                                         help_text=_('4 numbers code'))
-    user_type = models.CharField(_('User type'), choices=USER_TYPES, max_length=2)
+    user_type = models.CharField(_('User type'), choices=USER_TYPES, max_length=2, default='ST')
     gender = models.CharField(_('Gender'), max_length=1, choices=GENDER_CHOICES, default='U')
     phone = models.CharField(_('Phone'), max_length=20, null=True, blank=True)  # TODO: validation rules
     mobile = models.CharField(_('Mobile phone'), max_length=20, null=True, blank=True)  # TODO: validation rules
@@ -99,33 +141,83 @@ class UserProfile(models.Model):
     creation_timestamp = models.DateTimeField(auto_now_add=True)
     last_modified_timestamp = models.DateTimeField(auto_now=True)
     deactivation_timestamp = models.DateTimeField(null=True, blank=True, default=None)
-    # task_group = models.ForeignKey("medicalrecords.TaskGroup", verbose_name=_("Task group"), related_name="user_task_group", db_column="task_group_id")
-    # role = models.CharField(_('Role'), choices=ROLES, max_length=2, null=True, blank=True)
-    # logged_role = models.CharField(_('Logged role'), help_text=_('Only for clinicians users'), choices=ROLES, max_length=2, null=True, blank=True)
-    # sip_account = models.OneToOneField(SipAccount, verbose_name=_('Sip account'), null=True, blank=True)
-    # related_task_group = models.ManyToManyField('medicalrecords.TaskGroup', help_text=_('The task groups related a specialist unit (only for specialist TG)'), verbose_name=_('Related task group'), related_name='authorized_specs', blank=True, null=True)
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', ]
+
+    objects = MostUserManager()
 
     def get_full_name(self):
         return u'%s %s [%s]' % (self.last_name, self.first_name, self.get_user_type_display())
 
     def get_short_name(self):
-        return u'%s [%s]' % (self.user.username, self.user_type)
+        return u'%s [%s]' % (self.username, self.user_type)
 
     def __unicode__(self):
         return u'%s %s' % (self.last_name, self.first_name)
 
-    def clean(self):
-        # If is_health_care_provider == True and clinician_type != 'DO', raise exception
-        if not (self.numeric_password.isdigit() and len(self.numeric_password) == 4):
-            raise ValidationError(_('Numeric password has to be 4 digit number.'))
+    def to_dictionary(self):
+        try:
+            birth_date = u'%s' % self.birth_date.strftime('%d %b %Y') if self.birth_date else None
+        except Exception, e:
+            birth_date = u'%s' % datetime.strptime(self.birth_date, '%Y-%m-%d').strftime('%d %b %Y') \
+                if self.birth_date else None
+        user_dictionary = {
+            'id': u'%s' % self.id,
+            'uid': u'%s' % self.uid,
+            'username': u'%s' % self.username,
+            'first_name': u'%s' % self.first_name,
+            'last_name': u'%s' % self.last_name,
+            'birth_date': birth_date,
+            'is_staff': self.is_staff,
+            'is_active': self.is_active,
+            'is_admin': self.is_admin,
+            'user_type': {
+                'code': u'%s' % self.user_type,
+                'value': u'%s' % self.get_user_type_display()
+            },
+            'gender': {
+                'code': u'%s' % self.gender,
+                'value': u'%s' % self.get_gender_display()
+            },
+            'email': u'%s' % self.email,
+            'phone': u'%s' % self.phone if self.phone else None,
+            'mobile': u'%s' % self.mobile if self.mobile else None,
+            'certified_email': u'%s' % self.certified_email if self.certified_email else None
+        }
+        return user_dictionary
+
+    # def clean(self):
+    #     # If numeric_password is not numeric and length of numeric_password is not 4, raise exception
+    #     if not (self.numeric_password.isdigit() and len(self.numeric_password) == 4):
+    #         raise ValidationError(_('Numeric password has to be 4 digit number.'))
+    #
+    # def save(self, *args, **kwargs):
+    #     if self.user_type == 'TE':
+    #         self.user.is_staff = True
+    #     super(UserProfile, self).save(*args, **kwargs)
+
+    def has_perm(self, perm, obj=None):
+        "Does the user have a specific permission?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
+        # Simplest possible answer: Yes, always
+        return True
+
+    @property
+    def is_staff(self):
+        return self.is_admin
 
     class Meta:
-        db_table = "user_profile"
-        verbose_name = _("MOST User")
-        verbose_name_plural = _("MOST Users")
+        db_table = 'most_user'
+        verbose_name = _('MOST user')
+        verbose_name_plural = _('MOST users')
 
 
-class ClinicianUserProfile(models.Model):
+class ClinicianUser(models.Model):
     """Class ClinicianUserProfile
 
     Attributes:
@@ -138,20 +230,20 @@ class ClinicianUserProfile(models.Model):
         ('OP', _('Operator')),
     )
 
-    user_profile = models.ForeignKey('UserProfile')
+    user = models.ForeignKey('MostUser', related_name='clinician_related')
     clinician_type = models.CharField(_('Clinician type'), choices=CLINICIAN_TYPES, max_length=2)
     specialization = models.CharField(_('Clinical specialization'), null=True, blank=True, max_length=50)
     # If is_health_care_provider == True and clinician_type == 'DO', it can play the specialized role
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
 
     def get_full_name(self):
-        full_name = u'[%s] %s' % (self.clinician_type, self.user_profile)
+        full_name = u'[%s] %s' % (self.clinician_type, self.user)
         if self.specialization:
             full_name += u'- %s' % self.specialization
         return full_name
 
     def __unicode__(self):
-        clinician_string = u'%s %s' % (self.get_clinician_type_display(), self.user_profile)
+        clinician_string = u'%s %s' % (self.get_clinician_type_display(), self.user)
         if self.specialization:
             clinician_string += u' (%s)' % self.specialization
         if self.is_health_care_provider:
@@ -160,201 +252,10 @@ class ClinicianUserProfile(models.Model):
 
     def clean(self):
         # If is_health_care_provider == True and clinician_type != 'DO', raise exception
-        if not self.clinician_type == 'DO' and self.is_health_care_provider:
+        if not self.clinician_type == 'DR' and self.is_health_care_provider:
             raise ValidationError(_('Only doctors can provide health care service'))
 
     class Meta:
-        db_table = "clinician_user"
-        verbose_name = _("MOST Clinician User")
-        verbose_name_plural = _("MOST Clinician Users")
-
-# from django.db import models
-# from django.contrib.auth.models import User, UserManager
-# from django.core.exceptions import ValidationError
-# from remote.common.utilities import make_new_uid
-# from remote.sip.views import create_sip_account
-# from remote.sip.models import Sip, Extensions, Credentials
-# from remote.settings import DEFAULT_LANG, TURN_ADDRESS, SIP_ADDRESS
-# from django.utils.translation import ugettext, ugettext_lazy as _
-#
-# TYPES_USER = (
-#         ("AD", _('ADMINISTRATIVE')),
-#         ("TE", _('TECHNICAL')),
-#         ("CL", _('CLINICIAN')),
-#         ("DI", _('DIDACTIC')),
-# )
-#
-# # only for clinician users
-# ROLES = (
-#         ("SP", _('SPECIALIST')),
-#         ("AP", _('APPLICANT')),
-#         ("SU", _('SUPER SPECIALIST')),
-# )
-#
-# # Translated languages for user. If add new language -> add also in main_viewport.js
-# TRANSLATED_LANGUAGES = (
-#          ('it', _('Italiano')),
-#          ('en', _('English')),
-# )
-#
-# class UserLanguage(models.Model):
-#     user = models.ForeignKey("UserProfile", null=False, blank=False, unique=True)
-#     lang = models.CharField(_("Language"), choices=TRANSLATED_LANGUAGES, default=DEFAULT_LANG, max_length=2, null=False, blank=False)
-#
-#     def __unicode__(self):
-#         return u'%s set to %s' % (self.user, self.lang)
-#
-#     def get_lang(self):
-#         return self.lang
-#
-#     class Meta:
-#         db_table = "user_language"
-#         verbose_name = _("User Language")
-#         verbose_name_plural = _("Users Languages")
-#
-# class UserState(models.Model):
-#     state = models.CharField(_("state"), max_length=20, null=False, blank=False, unique=True)
-#
-#     def __unicode__(self):
-#         return u'%s' % self.state
-#
-#     class Meta:
-#         db_table = "user_state"
-#         verbose_name = _("User State")
-#         verbose_name_plural = _("User States")
-#
-#
-# class SipAccount(models.Model):
-#     uid = models.CharField(max_length=40, default=make_new_uid, unique=True)
-#     sip = models.ForeignKey("sip.Sip", verbose_name=_("Sip"))
-#     extensions = models.ForeignKey(Extensions, verbose_name=_("Extensions"))
-#     credentials = models.ForeignKey(Credentials, verbose_name=_("Credentials"))
-#     #Nella view che restituisce i dati alle app mandiamo gli indirizzi del file di settings.py
-#     """
-#     sip_server = models.CharField(_("Sip server"), default=SIP_ADDRESS, max_length=100)
-#     turn_server = models.CharField(_("Turn server"), default=TURN_ADDRESS, max_length=100)
-#
-#     sip_user = models.CharField(_("Sip user"), max_length=50)
-#     sip_pwd = models.CharField(_("Sip password"), max_length=50)
-#     sip_extension = models.CharField(_("Sip extension"), max_length=50)
-#     sip_server = models.CharField(_("Sip server"), max_length=100)
-#     turn_server = models.CharField(_("Turn server"), max_length=100)
-#     turn_user = models.CharField(_("Turn user"), max_length=100)
-#     turn_pwd = models.CharField(_("Turn password"), max_length=100)
-#     """
-#     def __unicode__(self):
-#         return u"%s - %s" % (self.sip, self.extensions)
-#
-#     class Meta:
-#         verbose_name = _("Sip account")
-#         verbose_name_plural = _("Sip accounts")
-#
-#     """def save(self, *args, **kwargs):
-#         pass"""
-#
-# class UserProfile(User): #models.Model): #
-#     #refers to a model not yet created -> https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey
-#     uid = models.CharField(max_length=40, default=make_new_uid, unique=True)
-#     numeric_password = models.BigIntegerField(_("Numeric password"), null=True, blank=True, help_text=_("4 numbers (only for clinicians)"))
-#     task_group = models.ForeignKey("medicalrecords.TaskGroup", verbose_name=_("Task group"), related_name="user_task_group", db_column="task_group_id")
-#     state = models.ForeignKey(UserState, verbose_name=_("Stato"), null=True, blank=True, db_column="state_id")
-#     specialization = models.CharField(_("Specialization"), null=True, blank=True, max_length=100)
-#     phone = models.CharField(_("Phone"), max_length=20)
-#     sex = models.CharField(_("Gender"), max_length=1, null=True, blank=True, choices=(('M', _('Male')), ('F', _('Female'))))
-#     type_user = models.CharField(_("Type user"), choices=TYPES_USER, max_length=2)
-#     role = models.CharField(_("Role"), choices=ROLES, max_length=2, null=True, blank=True)
-#     logged_role = models.CharField(_("Logged role"), help_text=_("Only for clinicians users"), choices=ROLES, max_length=2, null=True, blank=True)
-#     sip_account = models.OneToOneField(SipAccount, verbose_name=_("Sip account"), null=True, blank=True)
-#     related_task_group = models.ManyToManyField("medicalrecords.TaskGroup", help_text=_("The task groups related a specialist unit (only for specialist TG)"), verbose_name=_("Related task group"), related_name="authorized_specs", blank=True, null=True)
-#
-#     objects = UserManager()
-#
-#     def __unicode__(self):
-#         return u"%s %s" % (self.username, self.task_group)
-#
-#     def get_user_logged(self):
-#         return u"%s (%s %s)" % (self.username, self.first_name.title(), self.last_name.title())
-#
-#     def get_absolute_url(self):
-#         return "/user_profile/%i/get/" % self.id
-#
-#     def get_fields():
-#         mandatory = ["task_group", "state", "username", "password", "extension", "name", "surname", "email", "cell", ]
-#         optional = []
-#         return (mandatory, optional)
-#
-#     def get_full_name(self):
-#         return "%s %s (%s)" % (self.last_name, self.first_name, self.task_group.title)
-#
-#     def is_administrative(self):
-#         if self.type_user == "AD":
-#             return True
-#         else:
-#             return False
-#
-#     def get_utilities(self):
-#         utilities = []
-#         if self.type_user == "AD":
-#             utilities.extend([
-#                 "CalendarManager",
-#                 "PatientManager",
-#                 "UsersManager"
-#                 "Statistics"
-#             ])
-#         elif self.type_user == "CL":
-#             utilities.extend([
-#                 "TeleconsultationManager",
-#                 "CalendarManager",
-#                 "PatientManager",
-#                 "Medicalrecord",
-#                 "Statistics"
-#             ])
-#         #elif user.type_user == "TE":
-#         return utilities
-#
-#     class Meta:
-#         db_table = "user_profile"
-#         verbose_name = _("User Remote")
-#         verbose_name_plural = _("Users Remote")
-#
-#     def clean(self):
-#         # if the TG is not specialistic the role admitted is only applicant or didactic
-#         if not self.task_group.tc_service and self.role == "SP":
-#             raise ValidationError(_("The task group %s don't admits a specialistic role!") % self.task_group)
-#         if not self.task_group.tc_service and self.role == "SU":
-#             raise ValidationError(_("The task group %s don't admits a super specialistic role!") % self.task_group)
-#         # the role is admit only for clinicians
-#         if self.type_user != "CL" and self.role:
-#             raise ValidationError(_("The role is admit only for clinician type of user!"))
-#         # role required for clinicians
-#         if self.type_user == "CL" and not self.role:
-#             raise ValidationError(_("The role is required for clinicians!"))
-#         # SipAccount is valid only for Cinicians and not didactic roles
-#         if self.type_user != "CL" and self.sip_account:
-#             raise ValidationError(_("Only clinician can have a SIP account!"))
-#         if self.numeric_password and self.type_user != "CL": # or (self.role != "AP" and self.role != "SP")):
-#             raise ValidationError(_("Only clinician applicant/specialist admits a numeric password!"))
-#         if self.numeric_password :
-#             if len(str(self.numeric_password)) != 4:
-#                 raise ValidationError(_("The numeric password has 4 numbers!"))
-# #        # Only clinician specialist admits a related_task_group
-# #        if self.type_user != "CL" and self.related_task_group:
-# #            raise ValidationError(_("Only clinicians specialist (or super specialist) admits a related_task_group!"))
-# #        elif self.type_user == "CL":
-# #            if self.role != "SP" or self.role != "SU":
-# #                raise ValidationError(_("Only clinicians specialist (or super specialist) admits a related_task_group!"))
-#
-#     def save(self, *args, **kwargs):
-#         if self.type_user == "TE":
-#             #self.is_stuff = True
-#             self.is_staff = True
-#             # QUA BISOGNA AGGIUNGERE TUTTI I PERMESSI NECESSARI AL TECNICO!
-#         elif self.type_user == "CL":
-#             if not self.pk:
-#                 # verifichiamo che sia il primo inserimento dell'utente clinico
-#                 self.logged_role = self.role
-#                 # creo l'account sip associato
-#                 sip, extensions, credentials = create_sip_account(self)
-#                 sip_account = SipAccount.objects.create(sip=sip, extensions=extensions, credentials=credentials)
-#                 self.sip_account = sip_account
-#         super(UserProfile, self).save(*args, **kwargs)
+        db_table = 'most_clinician_user'
+        verbose_name = _('Clinician User')
+        verbose_name_plural = _('Clinician Users')
