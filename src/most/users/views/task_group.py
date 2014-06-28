@@ -11,12 +11,14 @@ from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA
 from ..models import TaskGroup, MostUser
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin
 def new(request):
     pass
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin OR staff + same task group
 def edit(request, task_group_id):
@@ -35,6 +37,7 @@ def list_available_states(request):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin
 def set_active_state(request, task_group_id, active_state):
@@ -45,7 +48,7 @@ def set_active_state(request, task_group_id, active_state):
         task_group.save()
         results[SUCCESS_KEY] = True
         results[MESSAGE_KEY] = _('Task group %s has %s activation state' % (task_group_id, active_state))
-        results[DATA_KEY] = {'id': task_group_id, 'is_health_care_provider': task_group.is_health_care_provider}
+        results[DATA_KEY] = {'id': task_group_id, 'is_active': task_group.is_active}
     except Exception, e:
         results[SUCCESS_KEY] = False
         results[ERRORS_KEY] = e
@@ -69,6 +72,7 @@ def is_provider(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 def set_provider(request, task_group_id):
     results = {}
@@ -85,6 +89,7 @@ def set_provider(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin OR staff + same task group
 def add_user(request, task_group_id, user_id):
@@ -104,6 +109,7 @@ def add_user(request, task_group_id, user_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin OR staff + same task group
 def remove_user(request, task_group_id, user_id):
@@ -141,6 +147,7 @@ def list_users(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin OR staff + same task group
 def add_related_task_group(request, task_group_id, related_task_group_id):
@@ -160,6 +167,7 @@ def add_related_task_group(request, task_group_id, related_task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@csrf_exempt
 @login_required
 # @user_passes_test add test for admin OR staff + same task group
 def remove_related_task_group(request, task_group_id, related_task_group_id):
