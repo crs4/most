@@ -13,3 +13,7 @@ def examples(request):
     response = render_to_response('users/demo.html', context)
     response.set_cookie("django_language", get_language())
     return response
+
+
+def task_group_is_provider(request):
+    return render_to_response('users/task_group/is_provider.html', {'api_description': request.POST['caller']})

@@ -1,0 +1,20 @@
+{% extends "users/base_modal.html" %}
+{% block modal_body %}
+  <div class="row clearfix">
+    <div class="col-md-12 column">
+      <form class="form-horizontal" role="form">
+        <div class="form-group">
+           <label for="select_task_group" class="col-sm-2 control-label">Select task group</label>
+          <div class="col-sm-10">
+            <input class="form-control" id="select_task_group" type="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+             <button type="submit" class="btn btn-default">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
