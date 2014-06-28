@@ -34,4 +34,16 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
     (r'^task_group/(?P<task_group_id>\d+)/is_provider/$', task_group.is_provider),  # get
     (r'^task_group/(?P<task_group_id>\d+)/set_provider/$', task_group.set_provider),  # post -> true | false
+    (r'^task_group/(?P<task_group_id>\d+)/add_user/(?P<user_id>\d+)/$', task_group.add_user),
+    (r'^task_group/(?P<task_group_id>\d+)/remove_user/(?P<user_id>\d+)/$', task_group.remove_user),
+    (r'^task_group/(?P<task_group_id>\d+)/list_users/$', task_group.list_users),
+    (r'^task_group/(?P<task_group_id>\d+)/add_related_task_group/(?P<related_task_group_id>\d+)/$',
+     task_group.add_related_task_group),
+    (r'^task_group/(?P<task_group_id>\d+)/remove_related_task_group/(?P<related_task_group_id>\d+)/$',
+     task_group.remove_related_task_group),
+    (r'^task_group/(?P<task_group_id>\d+)/list_related_task_groups/$', task_group.list_related_task_groups),
+    (r'^task_group/(?P<task_group_id>\d+)/has_clinicians/$', task_group.has_clinicians),
+    (r'^task_group/(?P<task_group_id>\d+)/list_clinicians/$', task_group.list_clinicians),
+    (r'^task_group/(?P<task_group_id>\d+)/has_clinician_provider/$', task_group.has_clinician_provider),
+    (r'^task_group/(?P<task_group_id>\d+)/list_clinician_providers/$', task_group.list_clinician_providers),
 )

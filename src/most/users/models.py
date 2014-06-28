@@ -34,6 +34,7 @@ class TaskGroup(models.Model):
                                    verbose_name=_('MOST Users'))
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
     is_active = models.BooleanField(_('Is active?'), default=True)
+    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group')
 
     # hospital = models.ForeignKey("Hospital", verbose_name=_("Hospital"))
     # task_group_type = models.CharField(_("Task group type"), max_length=50, null=True, blank=True,
