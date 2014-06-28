@@ -32,6 +32,10 @@ urlpatterns += patterns('',
 
 # TaskGroup API related urls
 urlpatterns += patterns('',
+    (r'^task_group/new/$', task_group.new),  # post
+    (r'^task_group/(?P<task_group_id>\d+)/edit/$', task_group.edit),  # post
+    (r'^task_group/list_available_states/$', task_group.list_available_states),
+    (r'^task_group/(?P<task_group_id>\d+)/set_active_state/(?P<active_state>\d+)/$', task_group.set_active_state),
     (r'^task_group/(?P<task_group_id>\d+)/is_provider/$', task_group.is_provider),  # get
     (r'^task_group/(?P<task_group_id>\d+)/set_provider/$', task_group.set_provider),  # post -> true | false
     (r'^task_group/(?P<task_group_id>\d+)/add_user/(?P<user_id>\d+)/$', task_group.add_user),

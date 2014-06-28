@@ -12,6 +12,47 @@ from ..models import TaskGroup, MostUser
 
 
 @login_required
+# @user_passes_test add test for admin
+def new(request):
+    pass
+
+
+@login_required
+# @user_passes_test add test for admin OR staff + same task group
+def edit(request, task_group_id):
+    pass
+
+
+def list_available_states(request):
+    results = {}
+    try:
+        results[SUCCESS_KEY] = True
+        results[MESSAGE_KEY] = _('Task group API available activation states found.')
+        results[DATA_KEY] = TaskGroup.ACTIVATION_STATES
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
+
+
+@login_required
+# @user_passes_test add test for admin
+def set_active_state(request, task_group_id, active_state):
+    results = {}
+    try:
+        task_group = TaskGroup.objects.get(pk=task_group_id)
+        task_group.is_active = TaskGroup.ACTIVATION_STATES[active_state]
+        task_group.save()
+        results[SUCCESS_KEY] = True
+        results[MESSAGE_KEY] = _('Task group %s has %s activation state' % (task_group_id, active_state))
+        results[DATA_KEY] = {'id': task_group_id, 'is_health_care_provider': task_group.is_health_care_provider}
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
+
+
+@login_required
 def is_provider(request, task_group_id):
     results = {}
     try:
