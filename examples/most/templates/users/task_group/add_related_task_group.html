@@ -5,14 +5,17 @@
       <form class="form-horizontal" role="form" id="modal_form">
         <div class="ui-widget form-group" id="task_group_field">
           <label for="select_task_group" class="control-label">Select task group</label>  <!--col-sm-4-->
-          <!--<div class="col-sm-8">-->
              <input id="select_task_group_id" type="hidden" />
              <input class="form-control" id="select_task_group" type="text" />
-          <!--</div>-->
+        </div>
+        <div class="ui-widget form-group" id="related_task_group_field">
+          <label for="select_related_task_group" class="control-label">Select related task group</label>  <!--col-sm-4-->
+          <input id="select_related_task_group_id" type="hidden" />
+          <input class="form-control" id="select_related_task_group" type="text" />
         </div>
         <div class="form-group">
           <div class="col-sm-offset-4 col-sm-8">
-             <button type="submit" class="btn btn-default">Is provider?</button>
+             <button type="submit" class="btn btn-default">Add related task group</button>
           </div>
         </div>
       </form>
@@ -57,11 +60,50 @@
             $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
         }});
         $( "#select_task_group" ).autocomplete( "option", "appendTo", "#task_group_field" );
+
+        $( "#select_related_task_group" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: "/users/task_group/search/",
+                dataType: "json",
+                data: {
+                    query_string: request.term
+                },
+                success: function( data ) {
+                    response( $.map( data.data, function( item ) {
+                        return {
+                            label: item.title + (item.hospital ? ' (' + item.hospital + ')' : '') + (item.is_health_care_provider ? ' - Provider' : ''),
+                            value: item.id,
+                            title: item.title,
+                            description: item.description,
+                            task_group_type: item.task_group_type.value,
+                            hospital: item.hospital,
+                            is_health_care_provider: item.is_health_care_provider,
+                            is_active: item.is_active
+                        }
+                    }));
+                }
+            });
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+            $( "#select_related_task_group" ).val( ui.item.label );
+            $( "#select_related_task_group_id" ).val( ui.item.value );
+            return false;
+        },
+        open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }});
+        $( "#select_related_task_group" ).autocomplete( "option", "appendTo", "#related_task_group_field" );
+
         $( "#modal_form").submit(function (event) {
             event.preventDefault();
             $.ajax({
-                url: '/users/task_group/' + $( "#select_task_group_id" ).val() + '/is_provider/',
-                type: 'GET',
+                url: '/users/task_group/' + $( "#select_task_group_id" ).val() + '/add_related_task_group/' + $( "#select_related_task_group_id" ).val() + '/',
+                type: 'POST',
                 dataType: 'text',
                 success: function (data, textStatus, jqXHR) {
                     var jsonData = JSON.parse(data);

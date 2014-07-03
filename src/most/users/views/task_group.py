@@ -11,6 +11,38 @@ from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA
 from ..models import TaskGroup, MostUser
 
 
+@require_GET
+@login_required
+def search(request):
+    result = {}
+    query_set = (Q())
+    try:
+        query_string = request.GET['query_string']
+        query_list = [query for query in query_string.split(' ') if query]
+        for query in query_list:
+            query_set = query_set & (
+                Q(title__icontains=query) |
+                Q(description__icontains=query) |
+                Q(hospital__icontains=query)
+            )
+        task_groups = TaskGroup.objects.filter(query_set)
+        count_task_groups = task_groups.count()
+        result[DATA_KEY] = []
+        if count_task_groups:
+            for task_group in task_groups:
+                result[DATA_KEY].append(task_group.to_dictionary(exclude_users=True, exclude_related_task_groups=True))
+            result[MESSAGE_KEY] = _('%(count_task_groups)s task groups found for query string: \'%(query_string)s\'' %
+                                    {'count_task_groups': count_task_groups, 'query_string': query_string})
+        else:
+            result[MESSAGE_KEY] = _('No task groups found for query string: \'%s\'' % query_string)
+        result[SUCCESS_KEY] = True
+        result[TOTAL_KEY] = count_task_groups
+    except Exception, e:
+        result[ERRORS_KEY] = e
+        result[SUCCESS_KEY] = False
+    return HttpResponse(json.dumps(result), content_type='application/json; charset=utf8')
+
+
 @csrf_exempt
 @login_required
 # @user_passes_test add test for admin
@@ -39,6 +71,7 @@ def list_available_states(request):
 
 @csrf_exempt
 @login_required
+@require_POST
 # @user_passes_test add test for admin
 def set_active_state(request, task_group_id, active_state):
     results = {}
@@ -195,7 +228,8 @@ def list_related_task_groups(request, task_group_id):
         related_task_groups = TaskGroup.objects.get(pk=task_group_id).related_task_groups.all()
         related_task_groups_list = []
         for related_task_group in related_task_groups:
-            related_task_groups_list.append(related_task_group.to_dictionary())
+            related_task_groups_list.append(related_task_group.to_dictionary(exclude_users=True,
+                                                                             exclude_related_task_groups=True))
         results[SUCCESS_KEY] = True
         results[MESSAGE_KEY] = _('Related task groups of task group %s found.' % task_group_id)
         results[DATA_KEY] = related_task_groups_list

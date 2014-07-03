@@ -17,3 +17,87 @@ def examples(request):
 
 def task_group_is_provider(request):
     return render_to_response('users/task_group/is_provider.html', {'api_description': request.POST['caller']})
+
+
+def task_group_set_provider(request):
+    return render_to_response('users/task_group/set_provider.html', {'api_description': request.POST['caller']})
+
+
+def task_group_set_active_state(request):
+    return render_to_response('users/task_group/set_active_state.html', {'api_description': request.POST['caller']})
+
+
+def task_group_add_user(request):
+    return render_to_response('users/task_group/add_user.html', {'api_description': request.POST['caller']})
+
+
+def task_group_remove_user(request):
+    return render_to_response('users/task_group/remove_user.html', {'api_description': request.POST['caller']})
+
+
+def task_group_list_users(request):
+    return render_to_response('users/task_group/list_users.html', {'api_description': request.POST['caller']})
+
+
+def task_group_add_related_task_group(request):
+    return render_to_response('users/task_group/add_related_task_group.html', {'api_description': request.POST['caller']})
+
+
+def task_group_remove_related_task_group(request):
+    return render_to_response('users/task_group/remove_related_task_group.html', {'api_description': request.POST['caller']})
+
+
+def task_group_list_related_task_group(request):
+    return render_to_response('users/task_group/list_related_task_group.html', {'api_description': request.POST['caller']})
+
+
+def task_group_has_clinicians(request):
+    return render_to_response('users/task_group/has_clinicians.html', {'api_description': request.POST['caller']})
+
+
+def task_group_list_clinicians(request):
+    return render_to_response('users/task_group/list_clinicians.html', {'api_description': request.POST['caller']})
+
+
+def task_group_has_clinician_provider(request):
+    return render_to_response('users/task_group/has_clinician_provider.html', {'api_description': request.POST['caller']})
+
+
+def task_group_list_clinician_providers(request):
+    return render_to_response('users/task_group/list_clinician_providers.html', {'api_description': request.POST['caller']})
+
+
+def task_group_search(request):
+    return render_to_response('users/task_group/search.html', {'api_description': request.POST['caller']})
+
+
+def most_user_get_user_info(request):
+    return render_to_response('users/most_user/get_user_info.html', {'api_description': request.POST['caller']})
+
+
+def most_user_search(request):
+    return render_to_response('users/most_user/search.html', {'api_description': request.POST['caller']})
+
+
+def most_user_deactivate(request):
+    return render_to_response('users/most_user/deactivate.html', {'api_description': request.POST['caller']})
+
+
+def most_user_activate(request):
+    return render_to_response('users/most_user/activate.html', {'api_description': request.POST['caller']})
+
+
+def clinician_user_search(request):
+    return render_to_response('users/clinician_user/search.html', {'api_description': request.POST['caller']})
+
+
+def clinician_user_is_provider(request):
+    return render_to_response('users/clinician_user/is_provider.html', {'api_description': request.POST['caller']})
+
+
+def clinician_user_set_provider(request):
+    return render_to_response('users/clinician_user/set_provider.html', {'api_description': request.POST['caller']})
+
+
+def clinician_user_get_user_info(request):
+    return render_to_response('users/clinician_user/get_user_info.html', {'api_description': request.POST['caller']})

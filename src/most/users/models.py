@@ -38,7 +38,7 @@ class TaskGroup(models.Model):
                                    verbose_name=_('MOST Users'))
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
     is_active = models.BooleanField(_('Is active?'), default=True)
-    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group')
+    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group', symmetrical=False)
 
     def clinicians_count(self):
         return self.users.filter(clinician_related__isnull=False).count()
@@ -51,21 +51,32 @@ class TaskGroup(models.Model):
     def __unicode__(self):
         return u'%s' % self.title
 
-    def to_dictionary(self):
+    def to_dictionary(self, exclude_users=False, exclude_related_task_groups=False):
         task_group_dictionary = {
-            'title': self.title,
-            'description': self.description,
+            'id': u'%s' % self.pk,
+            'title': u'%s' % self.title,
+            'description': u'%s' % self.description,
             'task_group_type': {
-                'key': self.task_group_type,
-                'value': self.get_task_group_type_display()
+                'key': u'%s' % self.task_group_type,
+                'value': u'%s' % self.get_task_group_type_display()
             },
-            'hospital': self.hospital if self.hospital else None,
+            'hospital': u'%s' % self.hospital if self.hospital else None,
             'is_health_care_provider': self.is_health_care_provider,
             'is_active': self.is_active,
-            'users': [user.to_dictionary() for user in self.users.all()] if self.users else None,
-            'related_task_groups': [task_group.to_dictionary() for task_group in self.related_task_groups.all()]
-            if self.related_task_groups else None
         }
+        if not exclude_users and self.users:
+            task_group_dictionary['users'] = [
+                user.to_dictionary() for user in self.users.all()
+            ]
+        elif not exclude_users and not self.users:
+            task_group_dictionary['users'] = None
+        if not exclude_related_task_groups and self.related_task_groups:
+            task_group_dictionary['related_task_groups'] = [
+                task_group.to_dictionary(exclude_users=exclude_users, exclude_related_task_groups=True)
+                for task_group in self.related_task_groups.all()
+            ]
+        elif not exclude_related_task_groups and not self.related_task_groups:
+            task_group_dictionary['related_task_groups'] = None
         return task_group_dictionary
 
     class Meta:
@@ -195,8 +206,10 @@ class MostUser(AbstractBaseUser):
             'mobile': u'%s' % self.mobile if self.mobile else None,
             'certified_email': u'%s' % self.certified_email if self.certified_email else None
         }
-        if not exclude_clinician and self.clinician_related:
-            user_dictionary.update(self.clinician_related.to_dictionary(exclude_user=True))
+        if not exclude_clinician:
+            clinician_related = self.clinician_related.all()
+            if clinician_related:
+                user_dictionary.update(clinician_related[0].to_dictionary(exclude_user=True))
         return user_dictionary
 
     # def clean(self):
