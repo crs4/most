@@ -5,6 +5,7 @@ from django.core.context_processors import csrf
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
+from users.forms import TaskGroupForm, MostUserForm, ClinicianUserForm
 
 
 def examples(request):
@@ -13,6 +14,16 @@ def examples(request):
     response = render_to_response('users/demo.html', context)
     response.set_cookie("django_language", get_language())
     return response
+
+
+def task_group_new(request):
+    form = TaskGroupForm()
+    return render_to_response('users/task_group/new.html', {'api_description': request.POST['caller'], 'form': form})
+
+
+def task_group_edit(request):
+    form = TaskGroupForm()
+    return render_to_response('users/task_group/edit.html', {'api_description': request.POST['caller'], 'form': form})
 
 
 def task_group_is_provider(request):
@@ -71,6 +82,16 @@ def task_group_search(request):
     return render_to_response('users/task_group/search.html', {'api_description': request.POST['caller']})
 
 
+def most_user_new(request):
+    form = MostUserForm()
+    return render_to_response('users/most_user/new.html', {'api_description': request.POST['caller'], 'form': form})
+
+
+def most_user_edit(request):
+    form = MostUserForm()
+    return render_to_response('users/most_user/edit.html', {'api_description': request.POST['caller'], 'form': form})
+
+
 def most_user_get_user_info(request):
     return render_to_response('users/most_user/get_user_info.html', {'api_description': request.POST['caller']})
 
@@ -85,6 +106,18 @@ def most_user_deactivate(request):
 
 def most_user_activate(request):
     return render_to_response('users/most_user/activate.html', {'api_description': request.POST['caller']})
+
+
+def clinician_user_new(request):
+    form = ClinicianUserForm()
+    return render_to_response('users/clinician_user/new.html', {
+        'api_description': request.POST['caller'], 'form': form})
+
+
+def clinician_user_edit(request):
+    form = ClinicianUserForm()
+    return render_to_response('users/clinician_user/edit.html', {
+        'api_description': request.POST['caller'], 'form': form})
 
 
 def clinician_user_search(request):

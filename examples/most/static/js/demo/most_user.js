@@ -1,4 +1,14 @@
 $(function() {
+    $('#most_user_func_1').click(function(){
+        console.log('in most_user_func_1 click event');
+        $( '#api-launcher' ).load('/most_user/new/', {'caller':$( this ).text()}, function() {
+            console.log('loaded');
+            $( '#api-launcher' ).modal().show();
+        })
+    });
+});
+
+$(function() {
     $('#most_user_func_2').click(function(){
         console.log('in most_user_func_2 click event');
         $( '#api-launcher' ).load('/most_user/get_user_info/', {'caller':$( this ).text()}, function() {

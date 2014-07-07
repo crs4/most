@@ -10,17 +10,57 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check
 from . import DATA_KEY, ERRORS_KEY, MESSAGE_KEY, SUCCESS_KEY, TOTAL_KEY
-from ..models import MostUser
+from users.models import MostUser
+from users.forms import MostUserForm
 
 
 @csrf_exempt
 @login_required
 @user_passes_test(staff_check)
 def new(request):
-    pass
+    results = {}
+    try:
+        most_user_form = MostUserForm(request.POST)
+        if most_user_form.is_valid():
+            most_user = most_user_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('MOST User %s successfully created.' % most_user.pk)
+            results[DATA_KEY] = most_user.to_dictionary()
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create MOST user.')
+            for field, error in most_user_form.errors.items():
+                results[ERRORS_KEY] += '\n%s\n' % error
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
+
+
+@login_required
+@csrf_exempt
+@require_POST
+def edit(request, user_id):
+    results = {}
+    try:
+        most_user = MostUser.objects.get(pk=user_id)
+        most_user_form = MostUserForm(request.POST, instance=most_user)
+        if most_user_form.is_valid():
+            most_user = most_user_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('MOST User %s successfully updated.')
+            results[DATA_KEY] = most_user.to_dictionary()
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create MOST user.')
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
 @csrf_exempt
+@require_POST
 def login_view(request):
     result = {}
     if request.method == 'POST':
@@ -51,6 +91,7 @@ def login_view(request):
     return HttpResponse(json.dumps(result), content_type='application/json; charset=utf8')
 
 
+@login_required
 def logout_view(request):
     logout(request)
     result = {
@@ -108,12 +149,6 @@ def search(request):
     return HttpResponse(json.dumps(result), content_type='application/json; charset=utf8')
 
 
-@require_POST
-@login_required
-def edit(request):
-    pass
-
-
 @login_required
 @user_passes_test(staff_check)
 def deactivate(request, user_id):
@@ -131,7 +166,11 @@ def deactivate(request, user_id):
         results[ERRORS_KEY] = e
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
+
 @login_required
+@login_required
+@csrf_exempt
+@require_POST
 @user_passes_test(staff_check)
 def activate(request, user_id):
     # solo chi e' staff, su user del proprio task group

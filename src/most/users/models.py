@@ -38,7 +38,8 @@ class TaskGroup(models.Model):
                                    verbose_name=_('MOST Users'))
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
     is_active = models.BooleanField(_('Is active?'), default=True)
-    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group', symmetrical=False)
+    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group', symmetrical=False,
+                                                 null=True, blank=True)
 
     def clinicians_count(self):
         return self.users.filter(clinician_related__isnull=False).count()
@@ -47,6 +48,9 @@ class TaskGroup(models.Model):
         # If is_health_care_provider == True and task_group_type != 'HF', raise exception
         if not self.task_group_type == 'HF' and self.is_health_care_provider:
             raise ValidationError(_('Only health care facilities can provide health care service.'))
+        # If is_health_care_provider == False and relatd_task_group not null, raise exception
+        if self.relatd_task_group and not self.is_health_care_provider:
+            raise ValidationError(_('Only health care facilities have related task group.'))
 
     def __unicode__(self):
         return u'%s' % self.title
@@ -86,20 +90,21 @@ class TaskGroup(models.Model):
 
 
 class MostUserManager(BaseUserManager):
-    def create_user(self, username, first_name, last_name, email, password=None):
+    def create_user(self, username, first_name, last_name, email, user_type, password=None):
         if not (username and first_name and last_name and email):
             raise ValueError('Users must have a username, a first_name, a last_name and an email')
         user = self.model(
             username=username,
             first_name=first_name,
             last_name=last_name,
+            user_type=user_type,
             email=self.normalize_email(email)
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, first_name, last_name, email, password):
+    def create_superuser(self, username, first_name, last_name, email, user_type, password):
         user = self.create_user(
             username,
             first_name,
@@ -108,6 +113,7 @@ class MostUserManager(BaseUserManager):
             password
         )
         user.is_admin = True
+        user.user_type = user_type
         user.save(using=self._db)
         return user
 
@@ -164,7 +170,7 @@ class MostUser(AbstractBaseUser):
     deactivation_timestamp = models.DateTimeField(null=True, blank=True, default=None)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', ]
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'user_type']
 
     objects = MostUserManager()
 
@@ -236,6 +242,11 @@ class MostUser(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
 
+    def clean(self):
+        # If is_admin == True and user_type == 'ST', raise exception (?)
+        if self.is_admin and self.user_type == 'ST':
+            raise ValidationError(_('Students could not be admin users'))
+
     class Meta:
         db_table = 'most_user'
         verbose_name = _('MOST user')
@@ -255,7 +266,7 @@ class ClinicianUser(models.Model):
         ('OP', _('Operator')),
     )
 
-    user = models.ForeignKey('MostUser', related_name='clinician_related')
+    user = models.ForeignKey('MostUser', related_name='clinician_related', unique=True)
     clinician_type = models.CharField(_('Clinician type'), choices=CLINICIAN_TYPES, max_length=2)
     specialization = models.CharField(_('Clinical specialization'), null=True, blank=True, max_length=50)
     # If is_health_care_provider == True and clinician_type == 'DO', it can play the specialized role
@@ -289,6 +300,9 @@ class ClinicianUser(models.Model):
         return clinician_user
 
     def clean(self):
+        # If related_user is not a clinician, raise exception
+        if not self.user.user_type == 'CL':
+            raise ValidationError(_('Related user type must be "clinician".'))
         # If is_health_care_provider == True and clinician_type != 'DO', raise exception
         if not self.clinician_type == 'DR' and self.is_health_care_provider:
             raise ValidationError(_('Only doctors can provide health care service'))

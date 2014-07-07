@@ -8,7 +8,8 @@ from datetime import date, datetime
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
-from ..models import TaskGroup, MostUser
+from users.models import TaskGroup, MostUser
+from users.forms import TaskGroupForm
 
 
 @require_GET
@@ -43,20 +44,54 @@ def search(request):
     return HttpResponse(json.dumps(result), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin
 def new(request):
-    pass
+    results = {}
+    try:
+        task_group_form = TaskGroupForm(request.POST)
+        if task_group_form.is_valid():
+            task_group = task_group_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('Task group %s successfully created.' % task_group.id)
+            results[DATA_KEY] = task_group.to_dictionary(exclude_related_task_groups=True, exclude_users=True)
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create task group.')
+            for field, error in task_group_form.errors.items():
+                results[ERRORS_KEY] += '\n%s\n' % error
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin OR staff + same task group
 def edit(request, task_group_id):
-    pass
+    results = {}
+    try:
+        task_group = TaskGroup.objects.get(pk=task_group_id)
+        task_group_form = TaskGroupForm(request.POST, instance=task_group)
+        if task_group_form.is_valid():
+            task_group = task_group_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('Task group %s successfully updated.')
+            results[DATA_KEY] = task_group.to_dictionary()
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create task group.')
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
+@login_required
 def list_available_states(request):
     results = {}
     try:
@@ -69,8 +104,8 @@ def list_available_states(request):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
 @require_POST
 # @user_passes_test add test for admin
 def set_active_state(request, task_group_id, active_state):
@@ -105,8 +140,9 @@ def is_provider(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 def set_provider(request, task_group_id):
     results = {}
     try:
@@ -122,8 +158,9 @@ def set_provider(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin OR staff + same task group
 def add_user(request, task_group_id, user_id):
     results = {}
@@ -142,8 +179,9 @@ def add_user(request, task_group_id, user_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin OR staff + same task group
 def remove_user(request, task_group_id, user_id):
     results = {}
@@ -180,8 +218,9 @@ def list_users(request, task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin OR staff + same task group
 def add_related_task_group(request, task_group_id, related_task_group_id):
     results = {}
@@ -200,8 +239,9 @@ def add_related_task_group(request, task_group_id, related_task_group_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@csrf_exempt
 @login_required
+@csrf_exempt
+@require_POST
 # @user_passes_test add test for admin OR staff + same task group
 def remove_related_task_group(request, task_group_id, related_task_group_id):
     results = {}

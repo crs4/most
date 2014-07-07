@@ -7,9 +7,55 @@ import json
 from datetime import date, datetime
 from django.db.models import Q
 from . import staff_check
-from ..models import ClinicianUser
+from users.models import ClinicianUser
+from users.forms import ClinicianUserForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
+
+
+@csrf_exempt
+@login_required
+@user_passes_test(staff_check)
+def new(request):
+    results = {}
+    try:
+        clinician_user_form = ClinicianUserForm(request.POST)
+        if clinician_user_form.is_valid():
+            clinician_user = clinician_user_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('Clinician user %s successfully created.' % clinician_user.pk)
+            results[DATA_KEY] = clinician_user.to_dictionary(exclude_user=True)
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create clinician user.')
+            for field, error in clinician_user_form.errors.items():
+                results[ERRORS_KEY] += '\n%s\n' % error
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
+
+
+@login_required
+@csrf_exempt
+@require_POST
+def edit(request, user_id):
+    results = {}
+    try:
+        clinician_user = ClinicianUser.objects.get(user__pk=user_id)
+        clinician_user_form = ClinicianUserForm(request.POST, instance=clinician_user)
+        if clinician_user_form.is_valid():
+            clinician_user = clinician_user_form.save()
+            results[SUCCESS_KEY] = True
+            results[MESSAGE_KEY] = _('Clinician user %s successfully updated.')
+            results[DATA_KEY] = clinician_user.to_dictionary(exclude_user=True)
+        else:
+            results[SUCCESS_KEY] = False
+            results[ERRORS_KEY] = _('Unable to create clinician user.')
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
 @login_required
@@ -31,6 +77,7 @@ def is_provider(request, user_id):
 
 @csrf_exempt
 @login_required
+@require_POST
 def set_provider(request, user_id):
     results = {}
     try:
@@ -46,8 +93,8 @@ def set_provider(request, user_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@require_GET
 @login_required
+@require_GET
 def search(request):
     result = {}
     query_set = (Q())

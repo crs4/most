@@ -8,9 +8,11 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^users/', include('users.urls', namespace='users')), #urls of users app api
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^demo/', 'most.views.examples', name='examples'),
 
     # Task Group
+    url(r'^task_group/new', 'most.views.task_group_new'),
     url(r'^task_group/is_provider', 'most.views.task_group_is_provider'),
     url(r'^task_group/set_provider', 'most.views.task_group_set_provider'),
     url(r'^task_group/set_active_state', 'most.views.task_group_set_active_state'),
@@ -27,6 +29,7 @@ urlpatterns = patterns('',
     url(r'^task_group/search', 'most.views.task_group_search'),
 
     # Most User
+    url(r'^most_user/new/', 'most.views.most_user_new'),
     url(r'^most_user/get_user_info/', 'most.views.most_user_get_user_info'),
     url(r'^most_user/search/', 'most.views.most_user_search'),
     url(r'^most_user/deactivate/', 'most.views.most_user_deactivate'),
@@ -34,6 +37,7 @@ urlpatterns = patterns('',
 
     # Clinician User
     url(r'^clinician_user/search/', 'most.views.clinician_user_search'),
+    url(r'^clinician_user/new/', 'most.views.clinician_user_new'),
     url(r'^clinician_user/get_user_info/', 'most.views.clinician_user_get_user_info'),
     url(r'^clinician_user/is_provider/', 'most.views.clinician_user_is_provider'),
     url(r'^clinician_user/set_provider/', 'most.views.clinician_user_set_provider'),

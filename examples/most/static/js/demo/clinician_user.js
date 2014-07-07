@@ -19,6 +19,16 @@ $(function() {
 });
 
 $(function() {
+    $('#clinician_user_func_5').click(function(){
+        console.log('in clinician_user_func_5 click event');
+        $( '#api-launcher' ).load('/clinician_user/new/', {'caller':$( this ).text()}, function() {
+            console.log('loaded');
+            $( '#api-launcher' ).modal().show();
+        })
+    });
+});
+
+$(function() {
     $('#clinician_user_func_1').click(function(){
         console.log('in clinician_user_func_1 click event');
         $( '#api-launcher' ).load('/clinician_user/is_provider/', {'caller':$( this ).text()}, function() {

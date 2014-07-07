@@ -194,3 +194,14 @@ $(function() {
         })
     });
 });
+
+$(function() {
+    $('#task_group_func_16').click(function(){
+        console.log('in task_group_func_16 click event');
+        //$( '#api-launcher-body' ).html($( this ).html());
+        $( '#api-launcher' ).load('/task_group/new/', {'caller':$( this ).text()}, function() {
+            console.log('loaded');
+            $( '#api-launcher' ).modal().show();
+        })
+    });
+});
