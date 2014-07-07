@@ -25,6 +25,10 @@ class TaskGroup(models.Model):
         ('SP', 'Service Provider'),
         ('HF', 'Health Care Facilities'),
     )
+    ACTIVATION_STATES = {
+        'active': True,
+        'inactive': False
+    }
 
     title = models.CharField(_('Title'), max_length=100, unique=True)
     description = models.CharField(_('Description'), max_length=100, help_text=_('e.g. "Pediatric Cardiology"'))
@@ -34,18 +38,8 @@ class TaskGroup(models.Model):
                                    verbose_name=_('MOST Users'))
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
     is_active = models.BooleanField(_('Is active?'), default=True)
-
-    # hospital = models.ForeignKey("Hospital", verbose_name=_("Hospital"))
-    # task_group_type = models.CharField(_("Task group type"), max_length=50, null=True, blank=True,
-    #                                    help_text=_("The S.S.D. (e.g. \"Patologia Cardiaca\")"))
-    # secretariat_phone = models.CharField(_("Secretariat phone"), max_length=50, null=True, blank=True)
-    # secretariat_fax = models.CharField(_("Secretariat fax"), max_length=50, null=True, blank=True)
-    # director = models.CharField(_("Director"), max_length=150)
-    # head_office_phone = models.CharField(_("Head office phone"), max_length=50, null=True, blank=True)
-    # head_office_email = models.EmailField(_("Head office email"), null=True, blank=True)
-    # tc_service = models.BooleanField(_("Offers teleconsultation service?"),
-    #     help_text=_("select if the task group offers an teleconsultation service"), default=False)
-    # devices = models.ManyToManyField(Device, verbose_name=_("Devices"), related_name="taskgroups", null=True, blank=True)
+    related_task_groups = models.ManyToManyField('self', related_name='specialist_task_group', symmetrical=False,
+                                                 null=True, blank=True)
 
     def clinicians_count(self):
         return self.users.filter(clinician_related__isnull=False).count()
@@ -54,9 +48,40 @@ class TaskGroup(models.Model):
         # If is_health_care_provider == True and task_group_type != 'HF', raise exception
         if not self.task_group_type == 'HF' and self.is_health_care_provider:
             raise ValidationError(_('Only health care facilities can provide health care service.'))
+        # If is_health_care_provider == False and relatd_task_group not null, raise exception
+        if self.relatd_task_group and not self.is_health_care_provider:
+            raise ValidationError(_('Only health care facilities have related task group.'))
 
     def __unicode__(self):
         return u'%s' % self.title
+
+    def to_dictionary(self, exclude_users=False, exclude_related_task_groups=False):
+        task_group_dictionary = {
+            'id': u'%s' % self.pk,
+            'title': u'%s' % self.title,
+            'description': u'%s' % self.description,
+            'task_group_type': {
+                'key': u'%s' % self.task_group_type,
+                'value': u'%s' % self.get_task_group_type_display()
+            },
+            'hospital': u'%s' % self.hospital if self.hospital else None,
+            'is_health_care_provider': self.is_health_care_provider,
+            'is_active': self.is_active,
+        }
+        if not exclude_users and self.users:
+            task_group_dictionary['users'] = [
+                user.to_dictionary() for user in self.users.all()
+            ]
+        elif not exclude_users and not self.users:
+            task_group_dictionary['users'] = None
+        if not exclude_related_task_groups and self.related_task_groups:
+            task_group_dictionary['related_task_groups'] = [
+                task_group.to_dictionary(exclude_users=exclude_users, exclude_related_task_groups=True)
+                for task_group in self.related_task_groups.all()
+            ]
+        elif not exclude_related_task_groups and not self.related_task_groups:
+            task_group_dictionary['related_task_groups'] = None
+        return task_group_dictionary
 
     class Meta:
         db_table = 'most_task_group'
@@ -65,20 +90,21 @@ class TaskGroup(models.Model):
 
 
 class MostUserManager(BaseUserManager):
-    def create_user(self, username, first_name, last_name, email, password=None):
+    def create_user(self, username, first_name, last_name, email, user_type, password=None):
         if not (username and first_name and last_name and email):
             raise ValueError('Users must have a username, a first_name, a last_name and an email')
         user = self.model(
             username=username,
             first_name=first_name,
             last_name=last_name,
+            user_type=user_type,
             email=self.normalize_email(email)
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, first_name, last_name, email, password):
+    def create_superuser(self, username, first_name, last_name, email, user_type, password):
         user = self.create_user(
             username,
             first_name,
@@ -87,6 +113,7 @@ class MostUserManager(BaseUserManager):
             password
         )
         user.is_admin = True
+        user.user_type = user_type
         user.save(using=self._db)
         return user
 
@@ -143,7 +170,7 @@ class MostUser(AbstractBaseUser):
     deactivation_timestamp = models.DateTimeField(null=True, blank=True, default=None)
 
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', ]
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'user_type']
 
     objects = MostUserManager()
 
@@ -156,7 +183,7 @@ class MostUser(AbstractBaseUser):
     def __unicode__(self):
         return u'%s %s' % (self.last_name, self.first_name)
 
-    def to_dictionary(self):
+    def to_dictionary(self, exclude_clinician=False):
         try:
             birth_date = u'%s' % self.birth_date.strftime('%d %b %Y') if self.birth_date else None
         except Exception, e:
@@ -173,11 +200,11 @@ class MostUser(AbstractBaseUser):
             'is_active': self.is_active,
             'is_admin': self.is_admin,
             'user_type': {
-                'code': u'%s' % self.user_type,
+                'key': u'%s' % self.user_type,
                 'value': u'%s' % self.get_user_type_display()
             },
             'gender': {
-                'code': u'%s' % self.gender,
+                'key': u'%s' % self.gender,
                 'value': u'%s' % self.get_gender_display()
             },
             'email': u'%s' % self.email,
@@ -185,6 +212,10 @@ class MostUser(AbstractBaseUser):
             'mobile': u'%s' % self.mobile if self.mobile else None,
             'certified_email': u'%s' % self.certified_email if self.certified_email else None
         }
+        if not exclude_clinician:
+            clinician_related = self.clinician_related.all()
+            if clinician_related:
+                user_dictionary.update(clinician_related[0].to_dictionary(exclude_user=True))
         return user_dictionary
 
     # def clean(self):
@@ -211,6 +242,11 @@ class MostUser(AbstractBaseUser):
     def is_staff(self):
         return self.is_admin
 
+    def clean(self):
+        # If is_admin == True and user_type == 'ST', raise exception (?)
+        if self.is_admin and self.user_type == 'ST':
+            raise ValidationError(_('Students could not be admin users'))
+
     class Meta:
         db_table = 'most_user'
         verbose_name = _('MOST user')
@@ -230,7 +266,7 @@ class ClinicianUser(models.Model):
         ('OP', _('Operator')),
     )
 
-    user = models.ForeignKey('MostUser', related_name='clinician_related')
+    user = models.ForeignKey('MostUser', related_name='clinician_related', unique=True)
     clinician_type = models.CharField(_('Clinician type'), choices=CLINICIAN_TYPES, max_length=2)
     specialization = models.CharField(_('Clinical specialization'), null=True, blank=True, max_length=50)
     # If is_health_care_provider == True and clinician_type == 'DO', it can play the specialized role
@@ -250,7 +286,23 @@ class ClinicianUser(models.Model):
             clinician_string += u' - Provider'
         return clinician_string
 
+    def to_dictionary(self, exclude_user=False):
+        clinician_user = {
+            'clinician_type': {
+                'key': self.clinician_type,
+                'value': self.get_clinician_type_display()
+            },
+            'specialization': self.specialization if self.specialization else None,
+            'is_health_care_provider': self.is_health_care_provider
+        }
+        if not exclude_user:
+            clinician_user.update({'user': self.user.to_dictionary(exclude_clinician=True)})
+        return clinician_user
+
     def clean(self):
+        # If related_user is not a clinician, raise exception
+        if not self.user.user_type == 'CL':
+            raise ValidationError(_('Related user type must be "clinician".'))
         # If is_health_care_provider == True and clinician_type != 'DO', raise exception
         if not self.clinician_type == 'DR' and self.is_health_care_provider:
             raise ValidationError(_('Only doctors can provide health care service'))
