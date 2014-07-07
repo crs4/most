@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="android.widget.Button"/>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
+<fullyQualifiedTypeName name="android.util.Log"/>
+<fullyQualifiedTypeName name="com.android.volley.RequestQueue"/>
+<fullyQualifiedTypeName name="com.android.volley.toolbox.Volley"/>
+<fullyQualifiedTypeName name="com.android.volley.toolbox.JsonObjectRequest"/>
+<fullyQualifiedTypeName name="android.app.DownloadManager.Request"/>
+<fullyQualifiedTypeName name="com.android.volley.VolleyError"/>
+<fullyQualifiedTypeName name="com.android.volley.toolbox.StringRequest"/>
+<fullyQualifiedTypeName name="com.android.volley.Request"/>
+<fullyQualifiedTypeName name="java.util.Map"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="com.android.volley.toolbox.JsonArrayRequest"/>
+<fullyQualifiedTypeName name="org.json.JSONObject"/>
+</qualifiedTypeNameHistroy>
