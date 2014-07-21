@@ -8,8 +8,8 @@ from datetime import date, datetime
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
-from users.models import TaskGroup, MostUser
-from users.forms import TaskGroupForm
+from ...users.models import TaskGroup, MostUser
+from ...users.forms import TaskGroupForm
 
 
 @require_GET
@@ -32,11 +32,12 @@ def search(request):
         if count_task_groups:
             for task_group in task_groups:
                 result[DATA_KEY].append(task_group.to_dictionary(exclude_users=True, exclude_related_task_groups=True))
+            result[SUCCESS_KEY] = True
             result[MESSAGE_KEY] = _('%(count_task_groups)s task groups found for query string: \'%(query_string)s\'' %
                                     {'count_task_groups': count_task_groups, 'query_string': query_string})
         else:
+            result[SUCCESS_KEY] = False
             result[MESSAGE_KEY] = _('No task groups found for query string: \'%s\'' % query_string)
-        result[SUCCESS_KEY] = True
         result[TOTAL_KEY] = count_task_groups
     except Exception, e:
         result[ERRORS_KEY] = e

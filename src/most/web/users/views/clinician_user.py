@@ -7,8 +7,8 @@ import json
 from datetime import date, datetime
 from django.db.models import Q
 from . import staff_check
-from users.models import ClinicianUser
-from users.forms import ClinicianUserForm
+from ...users.models import ClinicianUser
+from ...users.forms import ClinicianUserForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
 
@@ -116,11 +116,12 @@ def search(request):
         if count_clinician_users:
             for clinician_user in clinician_users:
                 result[DATA_KEY].append(clinician_user.to_dictionary())
+            result[SUCCESS_KEY] = True
             result[MESSAGE_KEY] = _('%(clinician_users_count)s users found for query string: \'%(query_string)s\'' %
                                     {'clinician_users_count': count_clinician_users, 'query_string': query_string})
         else:
+            result[SUCCESS_KEY] = False
             result[MESSAGE_KEY] = _('No clinician users found for query string: \'%s\'' % query_string)
-        result[SUCCESS_KEY] = True
         result[TOTAL_KEY] = count_clinician_users
     except Exception, e:
         result[ERRORS_KEY] = e
