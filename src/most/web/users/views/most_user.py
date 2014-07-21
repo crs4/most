@@ -10,8 +10,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from . import staff_check
 from . import DATA_KEY, ERRORS_KEY, MESSAGE_KEY, SUCCESS_KEY, TOTAL_KEY
-from users.models import MostUser
-from users.forms import MostUserForm
+from ...users.models import MostUser
+from ...users.forms import MostUserForm
 
 
 @csrf_exempt
@@ -93,11 +93,14 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
-    logout(request)
-    result = {
-        SUCCESS_KEY: True,
-        MESSAGE_KEY: 'Bye.'
-    }
+    result = {}
+    try:
+        logout(request)
+        result[SUCCESS_KEY] = True
+        result[MESSAGE_KEY] = 'Bye.'
+    except Exception, e:
+            result[ERRORS_KEY] = e
+            result[SUCCESS_KEY] = False
     return HttpResponse(json.dumps(result), content_type='application/json; charset=utf8')
 
 
@@ -137,11 +140,12 @@ def search(request):
         if count_users:
             for user in users:
                 result[DATA_KEY].append(user.to_dictionary())
+            result[SUCCESS_KEY] = True
             result[MESSAGE_KEY] = _('%(users_count)s users found for query string: \'%(query_string)s\'' %
                                     {'users_count': count_users, 'query_string': query_string})
         else:
+            result[SUCCESS_KEY] = False
             result[MESSAGE_KEY] = _('No users found for query string: \'%s\'' % query_string)
-        result[SUCCESS_KEY] = True
         result[TOTAL_KEY] = count_users
     except Exception, e:
         result[ERRORS_KEY] = e
