@@ -5,7 +5,7 @@ from django.core.context_processors import csrf
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
-from users.forms import TaskGroupForm, MostUserForm, ClinicianUserForm
+from web.users.forms import TaskGroupForm, MostUserForm, ClinicianUserForm
 
 
 def examples(request):
