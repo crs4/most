@@ -47,11 +47,13 @@ def edit(request, user_id):
         if clinician_user_form.is_valid():
             clinician_user = clinician_user_form.save()
             results[SUCCESS_KEY] = True
-            results[MESSAGE_KEY] = _('Clinician user %s successfully updated.')
+            results[MESSAGE_KEY] = _('Clinician user %s successfully updated.' % user_id)
             results[DATA_KEY] = clinician_user.to_dictionary(exclude_user=True)
         else:
             results[SUCCESS_KEY] = False
             results[ERRORS_KEY] = _('Unable to create clinician user.')
+            for field, error in clinician_user_form.errors.items():
+                results[ERRORS_KEY] += '\n%s\n' % error
     except Exception, e:
         results[SUCCESS_KEY] = False
         results[ERRORS_KEY] = e
