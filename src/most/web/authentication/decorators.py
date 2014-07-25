@@ -6,6 +6,7 @@ import pytz
 from django.contrib.auth import authenticate, login
 from django.core.exceptions import ObjectDoesNotExist
 
+
 def oauth2_required(method):
     
     @functools.wraps(method)

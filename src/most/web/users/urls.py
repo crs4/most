@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from web.users.views import clinician_user, task_group, most_user, demo
+from most.web.users.views import clinician_user, task_group, most_user, demo
 from django.contrib import admin
 admin.autodiscover()
 

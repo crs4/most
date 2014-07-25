@@ -8,10 +8,10 @@ from datetime import date, datetime
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
-from . import staff_check
-from . import DATA_KEY, ERRORS_KEY, MESSAGE_KEY, SUCCESS_KEY, TOTAL_KEY
-from ...users.models import MostUser
-from ...users.forms import MostUserForm
+from most.web.users.views import staff_check
+from most.web.users.views import DATA_KEY, ERRORS_KEY, MESSAGE_KEY, SUCCESS_KEY, TOTAL_KEY
+from most.web.users.models import MostUser
+from most.web.users.forms import MostUserForm
 
 
 @csrf_exempt
