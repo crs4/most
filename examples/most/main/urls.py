@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^users/', include('most.web.users.urls', namespace='users')), #urls of users app api
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^demo/', 'main.views.examples', name='examples'),
+    url(r'^demo/', 'most.main.views.examples', name='examples'),
     url(r'^test$', "most.web.authentication.views.test_auth"),
 
     # Task Group
