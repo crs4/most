@@ -7,9 +7,9 @@ import json
 from datetime import date, datetime
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required, user_passes_test
-from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
-from ...users.models import TaskGroup, MostUser
-from ...users.forms import TaskGroupForm
+from most.web.users.views import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
+from most.web.users.models import TaskGroup, MostUser
+from most.web.users.forms import TaskGroupForm
 
 
 @require_GET

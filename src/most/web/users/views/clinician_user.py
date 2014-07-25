@@ -6,11 +6,11 @@ from django.utils.translation import ugettext as _
 import json
 from datetime import date, datetime
 from django.db.models import Q
-from . import staff_check
-from ...users.models import ClinicianUser
-from ...users.forms import ClinicianUserForm
+from most.web.users.views import staff_check
+from most.web.users.models import ClinicianUser
+from most.web.users.forms import ClinicianUserForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-from . import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
+from most.web.users.views import staff_check, SUCCESS_KEY, MESSAGE_KEY, TOTAL_KEY, ERRORS_KEY, DATA_KEY
 
 
 @csrf_exempt
