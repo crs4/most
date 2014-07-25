@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^demo/', 'main.views.examples', name='examples'),
-    url(r'^test$',  "most.web.authentication.views.test_auth"),
+    url(r'^test$',  "web.authentication.views.test_auth"),
 
     # Task Group
     url(r'^task_group/new', 'main.views.task_group_new'),
