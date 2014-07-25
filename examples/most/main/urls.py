@@ -8,6 +8,6 @@ urlpatterns = patterns('',
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
 
-    url(r'^test$',  "authentication.views.test_auth"),
+    url(r'^test$',  "most.web.authentication.views.test_auth"),
 
 )

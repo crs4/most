@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import datetime, json
 from provider.oauth2.models import AccessToken
-from authentication.decorators import oauth2_required
+from most.web.authentication.decorators import oauth2_required
 from django.http import HttpResponse
 import pytz
 
