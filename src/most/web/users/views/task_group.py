@@ -66,6 +66,7 @@ def new(request):
     except Exception, e:
         results[SUCCESS_KEY] = False
         results[ERRORS_KEY] = e
+        print e
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
@@ -88,6 +89,20 @@ def edit(request, task_group_id):
             results[ERRORS_KEY] = _('Unable to create task group.')
             for field, error in task_group_form.errors.items():
                 results[ERRORS_KEY] += '\n%s\n' % error
+    except Exception, e:
+        results[SUCCESS_KEY] = False
+        results[ERRORS_KEY] = e
+    return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
+
+
+@login_required
+def get_task_group_info(request, task_group_id):
+    results = {}
+    try:
+        task_group = TaskGroup.objects.get(pk=task_group_id)
+        results[SUCCESS_KEY] = True
+        results[MESSAGE_KEY] = _('Task group %s found.' % task_group_id)
+        results[DATA_KEY] = task_group.to_dictionary(exclude_related_task_groups=True, exclude_users=True)
     except Exception, e:
         results[SUCCESS_KEY] = False
         results[ERRORS_KEY] = e

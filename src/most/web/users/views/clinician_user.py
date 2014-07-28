@@ -139,7 +139,6 @@ def get_user_info(request, user_id):
         results[SUCCESS_KEY] = True
         results[MESSAGE_KEY] = _('Clinician user %s found.' % user_id)
         results[DATA_KEY] = clinician_user.user.to_dictionary()
-        print results[DATA_KEY]
     except Exception, e:
         results[SUCCESS_KEY] = False
         results[ERRORS_KEY] = e

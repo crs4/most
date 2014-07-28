@@ -1,4 +1,6 @@
 from django.forms import ModelForm
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 from most.web.users.models import MostUser, TaskGroup, ClinicianUser
 
 
@@ -7,6 +9,15 @@ class TaskGroupForm(ModelForm):
         super(TaskGroupForm, self).__init__(*args, **kwargs)
         self.fields['users'].queryset = MostUser.objects.filter(task_group_related__isnull=True)
         self.fields['related_task_groups'].queryset = TaskGroup.objects.filter(task_group_type='HF')
+
+    def clean(self):
+        cleaned_data = super(TaskGroupForm, self).clean()
+        related_task_groups = cleaned_data.get("related_task_groups")
+        is_health_care_provider = cleaned_data.get("is_health_care_provider")
+        # If is_health_care_provider == False and related_task_groups not null, raise exception
+        if related_task_groups and not is_health_care_provider:
+            raise ValidationError(_('Only health care facilities have related task group.'))
+        return cleaned_data
 
     class Meta:
         model = TaskGroup
