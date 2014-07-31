@@ -39,6 +39,8 @@ urlpatterns = patterns('',
     url(r'^task_group/search', 'most.main.views.task_group_search'),
 
     # Most User
+    url(r'^most_user/login/', 'most.main.views.most_user_login'),
+    url(r'^most_user/logout/', 'most.main.views.most_user_logout'),
     url(r'^most_user/new/', 'most.main.views.most_user_new'),
     url(r'^most_user/get_user_info/', 'most.main.views.most_user_get_user_info'),
     url(r'^most_user/search/', 'most.main.views.most_user_search'),

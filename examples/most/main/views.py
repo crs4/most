@@ -90,6 +90,16 @@ def task_group_search(request):
     return render_to_response('users/task_group/search.html', {'api_description': request.POST['caller']})
 
 
+def most_user_login(request):
+    form = MostUserForm()
+    return render_to_response('users/most_user/login.html', {'api_description': request.POST['caller'], 'form': form})
+
+
+def most_user_logout(request):
+    form = MostUserForm()
+    return render_to_response('users/most_user/logout.html', {'api_description': request.POST['caller'], 'form': form})
+
+
 def most_user_new(request):
     form = MostUserForm()
     return render_to_response('users/most_user/new.html', {'api_description': request.POST['caller'], 'form': form})

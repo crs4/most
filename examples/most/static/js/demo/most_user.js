@@ -8,6 +8,26 @@
  */
 
 $(function() {
+    $('#login').click(function(){
+        console.log('in login click event');
+        $( '#api-launcher' ).load('/most_user/login/', {'caller':$( this ).text()}, function() {
+            console.log('loaded');
+            $( '#api-launcher' ).modal().show();
+        })
+    });
+});
+
+$(function() {
+    $('#logout').click(function(){
+        console.log('in logout click event');
+        $( '#api-launcher' ).load('/most_user/logout/', {'caller':$( this ).text()}, function() {
+            console.log('loaded');
+            $( '#api-launcher' ).modal().show();
+        })
+    });
+});
+
+$(function() {
     $('#most_user_func_1').click(function(){
         console.log('in most_user_func_1 click event');
         $( '#api-launcher' ).load('/most_user/new/', {'caller':$( this ).text()}, function() {
