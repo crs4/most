@@ -25,8 +25,8 @@ Verify that the istance with **MOST** library is up and running.
     
     
     USER_DATA = {
-        'username': 'valeria',
-        'password': 'valleria',
+        'username': 'admintest',
+        'password': 'admintest',
     }
     
     user = compose_post_request('/users/user/login/', USER_DATA)
@@ -344,8 +344,6 @@ the following):
 -  ``/users/user/(?P<user_id>\d+)/deactivate/``
 
 -  ``/users/user/(?P<user_id>\d+)/activate/``
-
--  ``/users/user/logout/``
 
 .. code:: python
 
