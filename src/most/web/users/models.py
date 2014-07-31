@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from datetime import date, datetime
@@ -48,9 +49,6 @@ class TaskGroup(models.Model):
         # If is_health_care_provider == True and task_group_type != 'HF', raise exception
         if not self.task_group_type == 'HF' and self.is_health_care_provider:
             raise ValidationError(_('Only health care facilities can provide health care service.'))
-        # If is_health_care_provider == False and relatd_task_group not null, raise exception
-        if self.relatd_task_group and not self.is_health_care_provider:
-            raise ValidationError(_('Only health care facilities have related task group.'))
 
     def __unicode__(self):
         return u'%s' % self.title
