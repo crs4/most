@@ -110,7 +110,7 @@ Models
 .. py:class:: ClinicianUser
 
 
-ReST API reference
+REST API reference
 ==================
 
 API Methods
