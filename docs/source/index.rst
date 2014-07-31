@@ -7,7 +7,7 @@
 Welcome to MOST Web's documentation!
 ====================================
 
-MOST Web is a Django project that customize
+MOST Web is a Django project that customize user management
 
 .. toctree::
    :maxdepth: 4
