@@ -12,12 +12,11 @@ The MOST project aims to achieve an open, modular and scalable solution for the 
 The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation of telemedicine applications.
 
 Available framework:
-- [most-voip](https://github.com/crs4/most-voip): a fast and lightweight library created for handling VOIP sessions;
-- [most-demographics](https://github.com/crs4/most-demographics)
-- most-streaming
+* *most-voip:* a fast and lightweight library created for handling VOIP sessions;
+* *[most-demographics]*
 
-Helpers:
-- MOST Web is a Django project that customize user management and authentication for telemedicine applications
+Available helpers:
+* *most-web*: is a Django project that customize user management and authentication for telemedicine applications
 
 .. toctree::
    :maxdepth: 4
