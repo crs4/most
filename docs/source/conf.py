@@ -62,7 +62,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MOST Web'
+project = u'MOST'
 copyright = u'2014, Healthcare Flows - CRS4'
 
 # The version info for the project you're documenting, acts as replacement for

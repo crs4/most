@@ -1,13 +1,23 @@
-.. MOST Web documentation master file, created by
+.. MOST documentation master file, created by
    sphinx-quickstart on Thu Jul 10 17:16:13 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 ====================================
-Welcome to MOST Web's documentation!
+Welcome to MOST's documentation!
 ====================================
 
-MOST Web is a Django project that customize user management
+The MOST project aims to achieve an open, modular and scalable solution for the creation, execution and management of remote clinical consultations with direct interaction between specialists.
+
+The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation of telemedicine applications.
+
+Available framework:
+- [most-voip](https://github.com/crs4/most-voip): a fast and lightweight library created for handling VOIP sessions;
+- [most-demographics](https://github.com/crs4/most-demographics)
+- most-streaming
+
+Helpers:
+- MOST Web is a Django project that customize user management and authentication for telemedicine applications
 
 .. toctree::
    :maxdepth: 4
