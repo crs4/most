@@ -2,6 +2,6 @@
 Authors
 =======
 
-   .. codeauthor:: Francesco Cabras <paneb@crs4.it>
+   .. codeauthor:: Francesco Cabras <francesco.cabras@crs4.it>
    .. codeauthor:: Valeria Lecca <valeria.lecca@crs4.it>
    .. codeauthor:: Stefano Leone Monni <stefano.monni@crs4.it>
