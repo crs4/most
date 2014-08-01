@@ -1,7 +1,38 @@
 
-Examples
-========
+Users
+=====
 
+Getting started
+---------------
+
+Installation
+~~~~~~~~~~~~
+
+**Users** is a Django application, indipendent from any Django project.
+
+To use **Users** in your project, edit your ``settings.py`` file adding
+it to ``INSTALLED_APPS`` and properly setting ``AUTH_USER_MODEL``,
+``LOGIN_URL`` and ``LOGOUT_URL`` as follow:
+
+.. code:: python
+
+    INSTALLED_APPS = (
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        # ...
+        # your apps go here
+        # ...
+        'users',
+    )
+    # ...
+    AUTH_USER_MODEL = 'users.MostUser'
+    
+    LOGIN_URL = '/users/user/login/'
+    LOGOUT_URL = '/users/user/logout/'
 REST APIs
 ~~~~~~~~~
 
@@ -38,8 +69,6 @@ following command:
     
     user = compose_post_request('/users/user/login/', USER_DATA)
     print_response_data('user', user)
-
-
 TaskGroup module
 ^^^^^^^^^^^^^^^^
 
@@ -93,7 +122,6 @@ TaskGroup module provides the following web API:
     
     task_groups = compose_get_request('/users/task_group/search/', QUERY_STRING)
     print_response_data('task_group', task_groups)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -112,7 +140,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/new/', TASK_GROUP_DATA)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -125,7 +152,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/get_task_group_info/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -147,7 +173,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/edit/' % TASK_GROUP_ID, TASK_GROUP_DATA)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -158,7 +183,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/list_available_states/')
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -172,7 +196,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/set_active_state/%s/' % (TASK_GROUP_ID, TASK_GROUP_ACTIVATION_STATE))
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -185,7 +208,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/is_provider/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -198,7 +220,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/set_provider/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -212,7 +233,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/add_user/%d/' % (TASK_GROUP_ID, USER_ID))
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -226,7 +246,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/remove_user/%d/' % (TASK_GROUP_ID, USER_ID))
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -239,7 +258,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/list_users/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -253,7 +271,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/add_related_task_group/%d/' % (TASK_GROUP_ID, RELATED_TASK_GROUP_ID))
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -267,7 +284,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_post_request('/users/task_group/%d/remove_related_task_group/%d/' % (TASK_GROUP_ID, RELATED_TASK_GROUP_ID))
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -280,7 +296,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/list_related_task_groups/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -293,7 +308,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/has_clinicians/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -306,7 +320,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/list_clinicians/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -319,7 +332,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/has_clinician_provider/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -332,8 +344,6 @@ TaskGroup module provides the following web API:
     
     task_group = compose_get_request('/users/task_group/%d/list_clinician_providers/' % TASK_GROUP_ID)
     print_response_data('task_group', task_group)
-
-
 MostUser module
 ^^^^^^^^^^^^^^^
 
@@ -378,7 +388,6 @@ the following):
     
     user = compose_post_request('/users/user/new/', USER_DATA)
     print_response_data('user', user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -391,7 +400,6 @@ the following):
     
     user = compose_get_request('/users/user/%d/get_user_info/' % USER_ID)
     print_response_data('user', user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -404,7 +412,6 @@ the following):
     
     users = compose_get_request('/users/user/search/', QUERY_STRING)
     print_response_data('user', users)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -431,7 +438,6 @@ the following):
     
     user = compose_post_request('/users/user/%d/edit/' % USER_ID, USER_DATA)
     print_response_data('user', user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -444,7 +450,6 @@ the following):
     
     user = compose_get_request('/users/user/%d/deactivate/' % USER_ID)
     print_response_data('user', user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -457,8 +462,6 @@ the following):
     
     user = compose_post_request('/users/user/%d/activate/' % USER_ID)
     print_response_data('user', user)
-
-
 ClinicianUser
 ^^^^^^^^^^^^^
 
@@ -484,7 +487,6 @@ ClinicianUser module provides the following web API:
     
     clinician_user = compose_get_request('/users/clinician_user/%d/is_provider/' % USER_ID)
     print_response_data('clinician_user', clinician_user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -497,7 +499,6 @@ ClinicianUser module provides the following web API:
     
     clinician_user = compose_post_request('/users/clinician_user/%d/set_provider/' % USER_ID)
     print_response_data('clinician_user', clinician_user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -510,7 +511,6 @@ ClinicianUser module provides the following web API:
     
     clinician_user = compose_get_request('/users/clinician_user/search/', QUERY_STRING)
     print_response_data('clinician_user', clinician_user)
-
 .. code:: python
 
     # -*- coding: utf-8 -*-
@@ -523,8 +523,6 @@ ClinicianUser module provides the following web API:
     
     clinician_user = compose_get_request('/users/clinician_user/%d/get_user_info/' % USER_ID)
     print_response_data('clinician_user', clinician_user)
-
-
 Now you can run logout API:
 
 .. code:: python
