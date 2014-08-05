@@ -11,11 +11,26 @@ The MOST project aims to achieve an open, modular and scalable solution for the 
 
 The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation of telemedicine applications.
 
+In addition to the frameworks, the project contains a number of helper modules, that should ease developers to build telemedicine applications focusing only on high value-added functionality.
+
+Frameworks
+================
+
 - `Voip <http://most-voip.readthedocs.org/en/latest/>`_: a fast and lightweight library created for handling VOIP sessions;
 - `Demographics <http://most-demographics.readthedocs.org/en/latest/>`_: a Django application for patient management.
+- `Streaming <http://most-streaming.readthedocs.org/en/latest/>`_: a library for receive and play audio and video stream sent from  medical devices and video monitors.
+
+Helpers
+================
+
+- :doc:`users/most_user`:  a Django application for creation and management of administrative users;
+- :doc:`users/clinician_user`:  a Django application for creation and management of clinician users;
+- :doc:`users/task_group`:  a Django application for creation and management of technical and clinician task groups;
+- :doc:`authentication`:  a Django based producer application (and related consumer libraries) for application, device and user authentication based on oauth2 protocol.
 
 
-Start using MOST
+
+Project TOC
 ================
 
 .. toctree::
