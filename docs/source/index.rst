@@ -3,31 +3,31 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-====================================
+================================
 Welcome to MOST's documentation!
-====================================
+================================
 
 The MOST project aims to achieve an open, modular and scalable solution for the creation, execution and management of remote clinical consultations with direct interaction between specialists.
 
 The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation of telemedicine applications.
 
-Available framework:
+- `Voip <http://most-voip.readthedocs.org/en/latest/>`_: a fast and lightweight library created for handling VOIP sessions;
+- `Demographics <http://most-demographics.readthedocs.org/en/latest/>`_: a Django application for patient management.
 
-* *most-voip:* a fast and lightweight library created for handling VOIP sessions;
-* *[most-demographics]*
 
-Available helpers:
-
-* *most-web*: is a Django project that customize user management and authentication for telemedicine applications
+Start using MOST
+================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   installation
-   most-web-APIs
-   examples
+   modules
+   helpers
    license
    authors
+
+   .. most-web-APIs
+   .. examples
 
 
 Indices and tables

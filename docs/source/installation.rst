@@ -1,9 +1,8 @@
-===============
-Getting started
-===============
-
 Installation
-~~~~~~~~~~~~
+============
+
+Users Installation
+------------------
 
 **Users** is a Django application, indipendent from any Django project.
 
@@ -30,3 +29,7 @@ and LOGOUT\_URL as follow:
 
     LOGIN_URL = '/users/user/login/'
     LOGOUT_URL = '/users/user/logout/'
+
+
+Authentication Installation
+---------------------------
