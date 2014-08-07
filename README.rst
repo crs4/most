@@ -11,7 +11,7 @@ of telemedicine applications.
 Available framework:
 * `most-voip <https://github.com/crs4/most-voip>`_: a fast and lightweight library created for handling VOIP sessions;
 * `most-demographics <https://github.com/crs4/most-demographics>`_: a Django library created for manage patient data;
-* most-streaming;
+* `most-streaming <<https://github.com/crs4/most-streaming>`_: a framework for retrieve, decode and display AV stream transmitted by medical device and network cameras;
 
 
 Documentation
