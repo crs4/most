@@ -14,14 +14,14 @@ The project consists of a set of frameworks that deal with different aspects and
 In addition to the frameworks, the project contains a number of helper modules, that should ease developers to build telemedicine applications focusing only on high value-added functionality.
 
 Frameworks
-================
+==========
 
 - `Voip <http://most-voip.readthedocs.org/en/latest/>`_: a fast and lightweight library created for handling VOIP sessions;
 - `Demographics <http://most-demographics.readthedocs.org/en/latest/>`_: a Django application for patients management.
 - `Streaming <http://most-streaming.readthedocs.org/en/latest/>`_: a library to receive and play audio and video streams produced by medical and monitoring devices.
 
 Helpers
-================
+=======
 
 - :doc:`users/most_user`:  a Django application for creation and management of administrative users;
 - :doc:`users/clinician_user`:  a Django application for creation and management of clinician users;
@@ -31,7 +31,7 @@ Helpers
 
 
 Project TOC
-================
+===========
 
 .. toctree::
    :maxdepth: 2
@@ -40,9 +40,6 @@ Project TOC
    helpers
    license
    authors
-
-   .. most-web-APIs
-   .. examples
 
 
 Indices and tables
