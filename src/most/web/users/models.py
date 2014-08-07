@@ -33,7 +33,7 @@ class TaskGroup(models.Model):
     """
     TASK_GROUP_TYPES = (
         ('SP', 'Service Provider'),
-        ('HF', 'Health Care Facilities'),
+        ('HF', 'Health Care Facility'),
     )
     ACTIVATION_STATES = {
         'active': True,

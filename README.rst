@@ -1,20 +1,21 @@
 MOST
 ====
 
-The MOST (**M**oving research **O**utcomes to **S**tandard **T**elemedicine practice) project aims to achieve an open,
-modular and scalable solution for the creation, execution and management of remote clinical consultations with direct
-interaction between specialists.
+The MOST (**M**oving research **O**utcomes to **S**tandard **T**elemedicine practice) project aims to achieve an open, modular and scalable solution for the creation, execution and management of remote clinical consultations with direct interaction between specialists.
 
-The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation
-of telemedicine applications.
+The project consists of a set of frameworks that deal with different aspects and technologies useful for the creation of telemedicine applications.
 
-Available framework:
-* `most-voip <https://github.com/crs4/most-voip>`_: a fast and lightweight library created for handling VOIP sessions;
-* `most-demographics <https://github.com/crs4/most-demographics>`_: a Django library created for manage patient data;
-* `most-streaming <<https://github.com/crs4/most-streaming>`_: a framework for retrieve, decode and display AV stream transmitted by medical device and network cameras;
+In addition to the frameworks, the project contains a number of helper modules, that should ease developers to build telemedicine applications focusing only on high value-added functionality.
+
+Frameworks
+----------
+
+- `Voip <http://most-voip.readthedocs.org/en/latest/>`_: a fast and lightweight library created for handling VOIP sessions;
+- `Demographics <http://most-demographics.readthedocs.org/en/latest/>`_: a Django application for patients management.
+- `Streaming <http://most-streaming.readthedocs.org/en/latest/>`_: a library to receive and play audio and video streams produced by medical and monitoring devices.
 
 
 Documentation
 =============
 
-Documentation can be found `here <http://most.readthedocs.org/en/latest/>`_
+Full documentation can be found `here <http://most.readthedocs.org/en/latest/>`_
