@@ -91,7 +91,7 @@ def edit(request, task_group_id):
             task_group = task_group_form.save()
             results[SUCCESS_KEY] = True
             results[MESSAGE_KEY] = _('Task group %s successfully updated.' % task_group_id)
-            results[DATA_KEY] = task_group.to_dictionary()
+            results[DATA_KEY] = task_group.to_dictionary(exclude_related_task_groups=True, exclude_users=True)
         else:
             results[SUCCESS_KEY] = False
             results[ERRORS_KEY] = _('Unable to create task group.')

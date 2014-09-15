@@ -59,7 +59,7 @@ def edit(request, user_id):
             results[DATA_KEY] = clinician_user.to_dictionary(exclude_user=True)
         else:
             results[SUCCESS_KEY] = False
-            results[ERRORS_KEY] = _('Unable to create clinician user.')
+            results[ERRORS_KEY] = _('Unable to update clinician user.')
             for field, error in clinician_user_form.errors.items():
                 results[ERRORS_KEY] += '\n%s\n' % error
     except Exception, e:

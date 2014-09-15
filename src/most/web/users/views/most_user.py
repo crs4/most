@@ -164,6 +164,8 @@ def search(request):
 
 
 @login_required
+@csrf_exempt
+@require_POST
 @user_passes_test(staff_check)
 def deactivate(request, user_id):
     # solo chi e' staff, su user del proprio task group
@@ -181,7 +183,6 @@ def deactivate(request, user_id):
     return HttpResponse(json.dumps(results), content_type='application/json; charset=utf8')
 
 
-@login_required
 @login_required
 @csrf_exempt
 @require_POST
