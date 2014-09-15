@@ -64,16 +64,16 @@ class TaskGroup(models.Model):
 
     def to_dictionary(self, exclude_users=False, exclude_related_task_groups=False):
         task_group_dictionary = {
-            'id': u'%s' % self.pk,
-            'title': u'%s' % self.title,
-            'description': u'%s' % self.description,
-            'task_group_type': {
-                'key': u'%s' % self.task_group_type,
-                'value': u'%s' % self.get_task_group_type_display()
+            u'id': u'%s' % self.pk,
+            u'title': u'%s' % self.title,
+            u'description': u'%s' % self.description,
+            u'task_group_type': {
+                u'key': u'%s' % self.task_group_type,
+                u'value': u'%s' % self.get_task_group_type_display()
             },
-            'hospital': u'%s' % self.hospital if self.hospital else None,
-            'is_health_care_provider': self.is_health_care_provider,
-            'is_active': self.is_active,
+            u'hospital': u'%s' % self.hospital if self.hospital else None,
+            u'is_health_care_provider': self.is_health_care_provider,
+            u'is_active': self.is_active,
         }
         if not exclude_users and self.users:
             task_group_dictionary['users'] = [
@@ -197,27 +197,27 @@ class MostUser(AbstractBaseUser):
             birth_date = u'%s' % datetime.strptime(self.birth_date, '%Y-%m-%d').strftime('%d %b %Y') \
                 if self.birth_date else None
         user_dictionary = {
-            'id': u'%s' % self.id,
-            'uid': u'%s' % self.uid,
-            'username': u'%s' % self.username,
-            'first_name': u'%s' % self.first_name,
-            'last_name': u'%s' % self.last_name,
-            'birth_date': birth_date,
-            'is_staff': self.is_staff,
-            'is_active': self.is_active,
-            'is_admin': self.is_admin,
-            'user_type': {
-                'key': u'%s' % self.user_type,
-                'value': u'%s' % self.get_user_type_display()
+            u'id': u'%s' % self.id,
+            u'uid': u'%s' % self.uid,
+            u'username': u'%s' % self.username,
+            u'first_name': u'%s' % self.first_name,
+            u'last_name': u'%s' % self.last_name,
+            u'birth_date': birth_date,
+            u'is_staff': self.is_staff,
+            u'is_active': self.is_active,
+            u'is_admin': self.is_admin,
+            u'user_type': {
+                u'key': u'%s' % self.user_type,
+                u'value': u'%s' % self.get_user_type_display()
             },
-            'gender': {
-                'key': u'%s' % self.gender,
-                'value': u'%s' % self.get_gender_display()
+            u'gender': {
+                u'key': u'%s' % self.gender,
+                u'value': u'%s' % self.get_gender_display()
             },
-            'email': u'%s' % self.email,
-            'phone': u'%s' % self.phone if self.phone else None,
-            'mobile': u'%s' % self.mobile if self.mobile else None,
-            'certified_email': u'%s' % self.certified_email if self.certified_email else None
+            u'email': u'%s' % self.email,
+            u'phone': u'%s' % self.phone if self.phone else None,
+            u'mobile': u'%s' % self.mobile if self.mobile else None,
+            u'certified_email': u'%s' % self.certified_email if self.certified_email else None
         }
         if not exclude_clinician:
             clinician_related = self.clinician_related.all()
@@ -295,15 +295,15 @@ class ClinicianUser(models.Model):
 
     def to_dictionary(self, exclude_user=False):
         clinician_user = {
-            'clinician_type': {
-                'key': self.clinician_type,
-                'value': self.get_clinician_type_display()
+            u'clinician_type': {
+                u'key': self.clinician_type,
+                u'value': self.get_clinician_type_display()
             },
-            'specialization': self.specialization if self.specialization else None,
-            'is_health_care_provider': self.is_health_care_provider
+            u'specialization': self.specialization if self.specialization else None,
+            u'is_health_care_provider': self.is_health_care_provider
         }
         if not exclude_user:
-            clinician_user.update({'user': self.user.to_dictionary(exclude_clinician=True)})
+            clinician_user.update({u'user': self.user.to_dictionary(exclude_clinician=True)})
         return clinician_user
 
     def clean(self):

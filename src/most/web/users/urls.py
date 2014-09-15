@@ -23,9 +23,9 @@ urlpatterns = patterns('',
 
 # MostUser API related urls
 urlpatterns += patterns('',
-    (r'^user/new/$', most_user.new),
     (r'^user/login/$', most_user.login_view),
     (r'^user/logout/$', most_user.logout_view),
+    (r'^user/new/$', most_user.new),
     (r'^user/(?P<user_id>\d+)/get_user_info/$', most_user.get_user_info),
     (r'^user/search/$', most_user.search),
     (r'^user/(?P<user_id>\d+)/edit/$', most_user.edit),
@@ -36,6 +36,7 @@ urlpatterns += patterns('',
 # ClinicianUser API related urls
 urlpatterns += patterns('',
     (r'^clinician_user/new/$', clinician_user.new),  # post
+    #(r'^clinician_user/(?P<user_id>\d+)/edit/$', clinician_user.edit),  # post
     (r'^clinician_user/(?P<user_id>\d+)/is_provider/$', clinician_user.is_provider),  # get
     (r'^clinician_user/(?P<user_id>\d+)/set_provider/$', clinician_user.set_provider),  # post -> true | false
     (r'^clinician_user/search/$', clinician_user.search),  # get
