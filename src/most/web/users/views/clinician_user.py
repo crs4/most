@@ -95,7 +95,7 @@ def set_provider(request, user_id):
         clinician_user.is_health_care_provider = True
         clinician_user.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('User %s is now health care provider' % user_id)
+        results[MESSAGE_KEY] = _('User %s is now health care provider.' % user_id)
         results[DATA_KEY] = {'user_id': user_id, 'is_health_care_provider': clinician_user.is_health_care_provider}
     except Exception, e:
         results[SUCCESS_KEY] = False
