@@ -1,0 +1,45 @@
+[
+    {
+        "model": "exams.examstate",
+        "pk": 1,
+        "fields": {
+            "code": 1,
+            "description": "CREATED"
+        }
+    }, {
+        "model": "exams.examstate",
+        "pk": 2,
+        "fields": {
+            "code": 2,
+            "description": "OPENED"
+        }
+    }, {
+        "model": "exams.examstate",
+        "pk": 3,
+        "fields": {
+            "code": 3,
+            "description": "EDITED"
+        }
+    }, {
+        "model": "exams.examstate",
+        "pk": 4,
+        "fields": {
+            "code": 4,
+            "description": "CLOSED"
+        }
+    }, {
+        "model": "exams.examstate",
+        "pk": 5,
+        "fields": {
+            "code": 5,
+            "description": "REOPENED"
+        }
+    }, {
+        "model": "exams.examstate",
+        "pk": 6,
+        "fields": {
+            "code": 6,
+            "description": "REPORTED"
+        }
+    }
+]
