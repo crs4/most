@@ -275,7 +275,7 @@ class ClinicianUser(models.Model):
 
     user = models.ForeignKey('MostUser', related_name='clinician_related', unique=True)
     clinician_type = models.CharField(_('Clinician type'), choices=CLINICIAN_TYPES, max_length=2)
-    specialization = models.CharField(_('Clinical specialization'), null=True, blank=True, max_length=50)
+    speciality = models.CharField(_('Clinical speciality'), null=True, blank=True, max_length=50)
     # If is_health_care_provider == True and clinician_type == 'DO', it can play the specialized role
     is_health_care_provider = models.BooleanField(_('Is health care provider?'), default=True)
 

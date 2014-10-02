@@ -122,7 +122,7 @@ def list_available_states(request):
     results = {}
     try:
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group API available activation states found.')
+        results[MESSAGE_KEY] = _('Available activation states found.')
         results[DATA_KEY] = TaskGroup.ACTIVATION_STATES
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -141,7 +141,8 @@ def set_active_state(request, task_group_id, active_state):
         task_group.is_active = TaskGroup.ACTIVATION_STATES[active_state]
         task_group.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group %s has %s activation state' % (task_group_id, active_state))
+        results[MESSAGE_KEY] = _('Task group %(task_group_id)s has %(active_state)s activation state' %
+                                 {'task_group_id': task_group_id, 'active_state': active_state})
         results[DATA_KEY] = {'id': task_group_id, 'is_active': task_group.is_active}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -197,7 +198,8 @@ def add_user(request, task_group_id, user_id):
             task_group.users.add(user)
             task_group.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('User %s in task group %s' % (user_id, task_group_id))
+        results[MESSAGE_KEY] = _('User %(user_id)s added to task group %(task_group_id)s' %
+                                 {'user_id': user_id, 'task_group_id': task_group_id})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'user_id': user_id}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -218,7 +220,8 @@ def remove_user(request, task_group_id, user_id):
             task_group.users.remove(user)
             task_group.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('User %s no more in task group %s' % (user_id, task_group_id))
+        results[MESSAGE_KEY] = _('User %(user_id)s no more in task group %(task_group_id)s' %
+                                 {'user_id': user_id, 'task_group_id': task_group_id})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'user_id': user_id}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -235,7 +238,7 @@ def list_users(request, task_group_id):
         for user in users:
             users_list.append(user.to_dictionary())
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Users of task group %s found.' % task_group_id)
+        results[MESSAGE_KEY] = _('Users of task group %(task_group_id)s found.' % {'task_group_id': task_group_id})
         results[DATA_KEY] = users_list
         results[TOTAL_KEY] = users.count()
     except Exception, e:
@@ -257,7 +260,8 @@ def add_related_task_group(request, task_group_id, related_task_group_id):
             task_group.related_task_groups.add(related_task_group)
             task_group.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group %s related to task groups of %s' % (related_task_group, task_group_id))
+        results[MESSAGE_KEY] = _('Task group %(related_task_group)s related to task groups of %(task_group_id)s' %
+                                 {'related_task_group': related_task_group, 'task_group_id': task_group_id})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'related_task_group_id': related_task_group_id}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -278,8 +282,8 @@ def remove_related_task_group(request, task_group_id, related_task_group_id):
             task_group.related_task_groups.remove(related_task_group)
             task_group.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group %s no more in related task groups of %s' % (related_task_group_id,
-                                                                                         task_group_id))
+        results[MESSAGE_KEY] = _('Task group %(related_task_group_id)s no more in related task groups of %(task_group_id)s' %
+                                 {'related_task_group_id': related_task_group_id, 'task_group_id': task_group_id})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'related_task_group_id': related_task_group_id}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -297,7 +301,8 @@ def list_related_task_groups(request, task_group_id):
             related_task_groups_list.append(related_task_group.to_dictionary(exclude_users=True,
                                                                              exclude_related_task_groups=True))
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Related task groups of task group %s found.' % task_group_id)
+        results[MESSAGE_KEY] = _('Related task groups of task group %(task_group_id)s found.' %
+                                 {'task_group_id': task_group_id})
         results[DATA_KEY] = related_task_groups_list
         results[TOTAL_KEY] = related_task_groups.count()
     except Exception, e:
@@ -313,7 +318,8 @@ def has_clinicians(request, task_group_id):
         task_group = TaskGroup.objects.get(pk=task_group_id)
         clinicians_count = task_group.clinicians_count()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group %s has %s clinician users.' % (task_group_id, clinicians_count))
+        results[MESSAGE_KEY] = _('Task group %(task_group_id)s has %(clinicians_count)s clinician users.' %
+                                 {'task_group_id': task_group_id, 'clinicians_count': clinicians_count})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'clinicians_count': clinicians_count}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -330,7 +336,8 @@ def list_clinicians(request, task_group_id):
         for clinician_user in clinician_users:
             clinician_users_list.append(clinician_user.to_dictionary())
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Clinician users of task group %s found.' % task_group_id)
+        results[MESSAGE_KEY] = _('Clinician users of task group %(task_group_id)s found.' %
+                                 {'task_group_id': task_group_id})
         results[DATA_KEY] = clinician_users_list
         results[TOTAL_KEY] = clinician_users.count()
     except Exception, e:
@@ -347,8 +354,8 @@ def has_clinician_provider(request, task_group_id):
             clinician_related__isnull=False, clinician_related__is_health_care_provider=True)
         clinician_providers_count = clinician_provider_users.count()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Task group %s has %s clinician provider users.' %
-                                 (task_group_id, clinician_providers_count))
+        results[MESSAGE_KEY] = _('Task group %(task_group_id)s has %(clinician_providers_count)s clinician provider users.' %
+                                 {'task_group_id': task_group_id, 'clinician_providers_count': clinician_providers_count})
         results[DATA_KEY] = {'task_group_id': task_group_id, 'clinicians_count': clinician_providers_count}
     except Exception, e:
         results[SUCCESS_KEY] = False
@@ -366,7 +373,8 @@ def list_clinician_providers(request, task_group_id):
         for clinician_provider_user in clinician_provider_users:
             clinician_provider_users_list.append(clinician_provider_user.to_dictionary())
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('Clinician provider users of task group %s found.' % task_group_id)
+        results[MESSAGE_KEY] = _('Clinician provider users of task group %(task_group_id)s found.' %
+                                 {'task_group_id': task_group_id})
         results[DATA_KEY] = clinician_provider_users_list
         results[TOTAL_KEY] = clinician_provider_users.count()
     except Exception, e:

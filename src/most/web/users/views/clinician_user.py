@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #
 # Project MOST - Moving Outcomes to Standard Telemedicine Practice
 # http://most.crs4.it/
@@ -6,7 +8,6 @@
 # Dual licensed under the MIT or GPL Version 2 licenses.
 # See license-GPLv2.txt or license-MIT.txt
 
-# -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
@@ -95,7 +96,7 @@ def set_provider(request, user_id):
         clinician_user.is_health_care_provider = True
         clinician_user.save()
         results[SUCCESS_KEY] = True
-        results[MESSAGE_KEY] = _('User %s is now health care provider' % user_id)
+        results[MESSAGE_KEY] = _('User %s is now health care provider.' % user_id)
         results[DATA_KEY] = {'user_id': user_id, 'is_health_care_provider': clinician_user.is_health_care_provider}
     except Exception, e:
         results[SUCCESS_KEY] = False

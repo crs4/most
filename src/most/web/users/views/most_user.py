@@ -60,7 +60,7 @@ def edit(request, user_id):
             results[DATA_KEY] = most_user.to_dictionary()
         else:
             results[SUCCESS_KEY] = False
-            results[ERRORS_KEY] = _('Unable to edit MOST user.')
+            results[ERRORS_KEY] = _('Unable to edit MOST user %s.' % user_id)
             for field, error in most_user_form.errors.items():
                 results[ERRORS_KEY] += '\n%s\n' % error
     except Exception, e:
