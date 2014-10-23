@@ -13,6 +13,7 @@ from most.web.users.models import ClinicianUser
 
 
 @csrf_exempt
+@require_POST
 @login_required
 def new(request):
     results = {}
