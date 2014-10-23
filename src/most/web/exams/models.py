@@ -99,7 +99,8 @@ class Exam(models.Model):
             u'summary': u'%s' % self.summary if self.summary else None,
             u'start_datetime':  u'%s' % self.start_datetime.strftime('%d %b %Y') if self.start_datetime else None,
             u'end_datetime': u'%s' % self.end_datetime.strftime('%d %b %Y') if self.end_datetime else None,
-            u'clinician': self.clinician.to_dictionary(exclude_user=True),
+            u'clinician': u'%s' % self.clinician,
+            # u'clinician': self.clinician.to_dictionary(exclude_user=True),
             u'is_active': self.is_active,
             u'is_remote': self.is_remote,
         }
