@@ -51,6 +51,7 @@ class UserChangeForm(forms.ModelForm):
             'birth_date',
             'email',
             'numeric_password',
+            'password',
             'user_type',
             'gender',
             'phone',
@@ -86,6 +87,6 @@ class MostUserAdmin(UserAdmin):
     filter_horizontal = ()
 
 admin.site.register(MostUser, MostUserAdmin)
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
 admin.site.register(ClinicianUser)
 admin.site.register(TaskGroup)

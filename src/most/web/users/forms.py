@@ -54,12 +54,14 @@ class MostUserForm(ModelForm):
             'birth_date',
             'is_active',
             'is_admin',
+            'password',
             'numeric_password',
             'user_type',
             'gender',
             'phone',
             'mobile',
             'certified_email',
+
         ]
 
 
