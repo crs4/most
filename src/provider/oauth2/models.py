@@ -154,7 +154,7 @@ class AccessToken(models.Model):
     modified = models.DateTimeField(blank=True, editable=False)
 
     # taskgroup_uuid = models.CharField(max_length=40)
-    taskgroup = models.OneToOneField(TaskGroup)
+    taskgroup = models.ForeignKey(TaskGroup)
 
     objects = AccessTokenManager()
 
