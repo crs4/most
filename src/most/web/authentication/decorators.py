@@ -38,6 +38,13 @@ def oauth2_required(method):
             user = token.user
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
+
+            request.accesstoken = token
+
+            # After login, Retrieve task group and set in request
+            taskgroup = TaskGroup.objects.get(uuid=token.taskgroup_uuid)
+            request.taskgroup = taskgroup
+                        
             return method(request, *args, **kwargs)
         except ObjectDoesNotExist, ex:
             return HttpResponse(json.dumps({'success' : False, 'data' : {'error' : 'Token does not exists.'}}), content_type="application/json")
