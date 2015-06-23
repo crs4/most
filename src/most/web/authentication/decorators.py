@@ -43,7 +43,7 @@ def oauth2_required(method):
             request.accesstoken = token
 
             # After login, Retrieve task group and set in request
-            taskgroup = TaskGroup.objects.get(uuid=token.taskgroup_uuid)
+            taskgroup = token.taskgroup
             request.taskgroup = taskgroup
 
             return method(request, *args, **kwargs)
