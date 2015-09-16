@@ -9,12 +9,16 @@ The project consists of a set of frameworks that deal with different aspects and
 
 In addition to the frameworks, the project contains a number of helper modules, that should ease developers to build telemedicine applications focusing only on high value-added functionality.
 
-Frameworks
-----------
 
-- `Voip <http://most-voip.readthedocs.org/en/latest/>`_: a fast and lightweight library created for handling VOIP sessions;
-- `Demographics <http://most-demographics.readthedocs.org/en/latest/>`_: a Django application for patients management.
-- `Streaming <http://most-streaming.readthedocs.org/en/latest/>`_: a library to receive and play audio and video streams produced by medical and monitoring devices.
+Available MOST Frameworks
+=========================
+
+  * `MOST-Voip  <https://github.com/crs4/most-voip>`_  (a fast and lightweight library for handling VOIP sessions)
+  * `MOST-Streaming  <https://github.com/crs4/most-streaming>`_  (a library for managing audio/video streams)
+  * `MOST-Visualization  <https://github.com/crs4/most-visualization>`_  (a library for providing mobile applications with visual widgets for interacting with A/V streams)
+  * `MOST-Report  <https://github.com/crs4/most-report>`_ (a library for managing clinical models)
+  * `MOST-Demographics  <https://github.com/crs4/most-demographics>`_ (a Django application for patients management)
+  * `MOST-MedicalRecords  <https://github.com/crs4/most-medicalrecords>`_ (a frontend REST api for accessing to demographics and clinical data of patients.
 
 
 Documentation
