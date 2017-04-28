@@ -607,8 +607,10 @@ class AccessToken(OAuthView, Mixin):
         scope = data.get('scope')
 
         if constants.SINGLE_ACCESS_TOKEN:
+            print "SINGLE ACC TOKEN"
             at = self.get_access_token(request, user, scope, client)
         else:
+            print "CLIENT TYPE: %s" % client.client_type == constants.CONFIDENTIAL
             at = self.create_access_token(request, user, scope, client)
             # Public clients don't get refresh tokens
             if client.client_type == constants.CONFIDENTIAL:
