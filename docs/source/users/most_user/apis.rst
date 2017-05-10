@@ -1,7 +1,7 @@
 APIs
 ~~~~
 
-   .. http:method:: POST /users/user/new/
+   .. http:post:: /users/user/new/
 
       Create new user.
 
@@ -28,7 +28,7 @@ APIs
          :parameter json `data`: if success is True, it contains the created user data in json format
 
 
-   .. http:method:: POST /users/user/login/
+   .. http:post:: /users/user/login/
 
       Log a user in the system
 
@@ -42,7 +42,7 @@ APIs
          :parameter json `data`: if success is True, it contains the logged user data in json format
 
 
-   .. http:method:: GET /users/user/logout/
+   .. http:get:: /users/user/logout/
 
       Log a user out of the system
 
@@ -54,7 +54,7 @@ APIs
          :parameter str `errors`: an error string that explains the raised problems
 
 
-   .. http:method:: GET /users/user/(user_id)/get_user_info/
+   .. http:get:: /users/user/(user_id)/get_user_info/
 
       Get the information of the user identified by `user_id`
 
@@ -67,7 +67,7 @@ APIs
          :parameter json `data`: if success is True, it contains the data of user identified by `user_id`, in json format
 
 
-   .. http:method:: GET /users/user/search/
+   .. http:get:: /users/user/search/
 
       Get a list of users matching a query string in fields: username, last_name, first_name, email or certified_email
 
@@ -83,7 +83,7 @@ APIs
             data of users matching the query string, in json format
 
 
-   .. http:method:: POST /users/user/(user_id)/edit/
+   .. http:post:: /users/user/(user_id)/edit/
 
       Edit the information of the user identified by `user_id`
 
@@ -96,7 +96,7 @@ APIs
          :parameter json `data`: if success is True, it contains the updated data of user identified by `user_id`, in json format
 
 
-   .. http:method:: POST /users/user/(user_id)/deactivate/
+   .. http:post:: /users/user/(user_id)/deactivate/
 
       Deactivate the user identified by `user_id`
 
@@ -109,7 +109,7 @@ APIs
          :parameter json `data`: if success is True, it contains the keys `id` (for the user id) and `is_active` (for the activation state):
 
 
-   .. http:method:: POST /users/user/(user_id)/activate/
+   .. http:post:: /users/user/(user_id)/activate/
 
       Activate the user identified by `user_id`
 
